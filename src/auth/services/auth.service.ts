@@ -57,6 +57,8 @@ export class AuthService {
 
     const token: string = this.jwtService.generateToken(user);
 
+    await user.updateLastLogin();
+
     return { token, status: HttpStatus.OK, error: null };
   }
 
