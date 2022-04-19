@@ -29,8 +29,8 @@ export class JwtService {
    * @param decoded A decoded JWT token
    * @returns A valid User
    */
-  public async validateAuthObject(decoded: UserDocument): Promise<UserDocument> {
-    return this.authModel.findById(decoded._id);
+  public async validateUser(decoded: UserDocument): Promise<UserDocument> {
+    return this.authModel.findById(decoded.id);
   }
 
   /**
@@ -45,12 +45,12 @@ export class JwtService {
   /**
    * Validates a password against an User's password
    * @param password The password to be validated
-   * @param authObjectPassword The User's password
+   * @param userPassword The User's password
    * @returns The password validity state
    */
   // Validate User's password
-  public isPasswordValid(password: string, authObjectPassword: string): boolean {
-    return bcrypt.compareSync(password, authObjectPassword);
+  public isPasswordValid(password: string, userPassword: string): boolean {
+    return bcrypt.compareSync(password, userPassword);
   }
 
   /**
