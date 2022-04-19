@@ -5,6 +5,9 @@ export { default as validationSchema } from './validation-schema';
 export interface ConfigInterface {
   NODE_ENV: string;
 
+  HOST: string;
+  PORT: number;
+
   DB_USER: string;
   DB_PASSWORD: string;
   DB_NAME: string;
