@@ -4,13 +4,13 @@ import { Document } from 'mongoose';
 
 export type UserDocument = User & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class User {
-  @Prop()
+  @Prop({ required: true })
   email!: string;
 
   @Exclude()
-  @Prop()
+  @Prop({ required: true })
   password!: string;
 }
 
