@@ -4,7 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigInterface } from 'src/config';
 import { AuthController } from './auth.controller';
-import { User, UserSchema } from './entities/auth.entity';
+import { User, UserSchema } from './entities/user.entity';
 import { AuthService } from './services/auth.service';
 import { JwtService } from './services/jwt.service';
 import { JwtStrategy } from './strategies/jwt.strategy';

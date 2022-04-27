@@ -1,7 +1,7 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from './jwt.service';
 import { RegisterRequestDto, LoginRequestDto, ValidateRequestDto } from '../dto/auth.dto';
-import { User, UserDocument } from '../entities/auth.entity';
+import { User, UserDocument } from '../entities/user.entity';
 import { LoginResponse, RegisterResponse, ValidateResponse } from '../dto/proto/auth.pb';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
