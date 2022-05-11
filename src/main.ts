@@ -1,18 +1,27 @@
-import { ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { INestMicroservice, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { Transport } from '@nestjs/microservices';
+import { join } from 'path';
 import { AppModule } from './app.module';
-import { ConfigInterface } from './config';
+import { protobufPackage } from './auth/dto/proto/auth.pb';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app: INestMicroservice = await NestFactory.createMicroservice(AppModule, {
+    transport: Transport.GRPC,
+    options: {
+      url: `${process.env.HOST}:${process.env.PORT}`,
+      package: protobufPackage,
+      protoPath: join('node_modules', 'proto', 'proto-files', 'auth.proto'),
+    },
+  });
 
-  // Instantiate config service
-  const configService = app.get<ConfigService<ConfigInterface>>(ConfigService);
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   // Validate and Transform Global Pipes
   app.useGlobalPipes(
     new ValidationPipe({
+      whitelist: true,
       transform: true,
       transformOptions: {
         enableImplicitConversion: true,
@@ -20,7 +29,6 @@ async function bootstrap() {
     }),
   );
 
-  const port = configService.get('PORT', { infer: true });
-  await app.listen(port);
+  await app.listen();
 }
 bootstrap();
