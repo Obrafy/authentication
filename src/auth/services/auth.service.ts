@@ -1,8 +1,8 @@
-import { HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from './jwt.service';
-import { RegisterRequestDto, LoginRequestDto, ValidateRequestDto } from '../dto/auth.dto';
+import { RegisterRequestDto, LoginRequestDto, ValidateRequestDto, FindUserByIdRequestDto } from '../dto/auth.dto';
 import { User, UserDocument } from '../entities/user.entity';
-import { LoginResponse, RegisterResponse, ValidateResponse } from '../dto/proto/auth.pb';
+import { FindUserByIdResponse, LoginResponse, RegisterResponse, ValidateResponse } from '../dto/proto/auth.pb';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
@@ -80,6 +80,6 @@ export class AuthService {
       return { status: HttpStatus.CONFLICT, error: ['User not found'], userId: null };
     }
 
-    return { status: HttpStatus.OK, error: null, userId: decoded._id };
+    return { status: HttpStatus.OK, error: null, userId: decoded.id };
   }
 }

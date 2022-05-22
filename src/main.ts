@@ -12,7 +12,7 @@ async function bootstrap() {
     options: {
       url: `${process.env.HOST}:${process.env.PORT}`,
       package: protobufPackage,
-      protoPath: join('node_modules', 'proto', 'proto-files', 'auth.proto'),
+      protoPath: join('node_modules', 'proto', 'proto-files', 'authentication-service', 'auth.proto'),
     },
   });
 
