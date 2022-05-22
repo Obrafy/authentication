@@ -92,13 +92,13 @@ export class AuthService {
       status: HttpStatus.OK,
       error: null,
       user: {
-        ...user,
+        email: user.email,
         // Casting dates to integer for gRPC
         createdAt: user.createdAt.getTime(),
         updatedAt: user.updatedAt.getTime(),
-        lastLogin: user.lastLogin.getTime(),
+        lastLogin: user.lastLogin && user.lastLogin.getTime(),
         // Roles is not implemented yet
-        roles: [],
+        roles: user.roles,
       },
     };
   }

@@ -17,7 +17,7 @@ export enum Role {
 /** User Message */
 export interface User {
   email: string;
-  lastLogin: number;
+  lastLogin?: number | undefined;
   roles: Role[];
   createdAt: number;
   updatedAt: number;
