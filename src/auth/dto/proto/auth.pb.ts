@@ -23,15 +23,24 @@ export interface User {
   updatedAt: number;
 }
 
-/** Register */
+/**
+ * Register
+ * Request
+ */
 export interface RegisterRequest {
   email: string;
   password: string;
 }
 
+/** Response */
+export interface RegisterResponseData {
+  userId: string;
+}
+
 export interface RegisterResponse {
   status: number;
   error: string[];
+  data: RegisterResponseData | undefined;
 }
 
 /** Login */

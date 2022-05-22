@@ -1,4 +1,4 @@
-import { HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from './jwt.service';
 import { RegisterRequestDto, LoginRequestDto, ValidateRequestDto, FindUserByIdRequestDto } from '../dto/auth.dto';
 import { User, UserDocument } from '../entities/user.entity';
@@ -19,11 +19,11 @@ export class AuthService {
    * @param param.password The User's passsword
    * @returns The response status and possible errors
    */
-  public async register({ email, password }: RegisterRequestDto): Promise<RegisterResponse> {
+  public async register({ email, password }: RegisterRequestDto): Promise<UserDocument> {
     const userExists = await this.authModel.exists({ email });
 
     if (userExists) {
-      return { status: HttpStatus.CONFLICT, error: ['E-Mail already exists'] };
+      throw new ConflictException('User already exists');
     }
 
     const newUser = await this.authModel.create({
@@ -33,7 +33,7 @@ export class AuthService {
 
     await newUser.save();
 
-    return { status: HttpStatus.CREATED, error: null };
+    return newUser;
   }
 
   /**

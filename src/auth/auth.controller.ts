@@ -1,4 +1,4 @@
-import { Controller, Inject } from '@nestjs/common';
+import { Controller, HttpStatus, Inject } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { FindUserByIdRequestDto, LoginRequestDto, RegisterRequestDto, ValidateRequestDto } from './dto/auth.dto';
 import {
@@ -16,8 +16,9 @@ export class AuthController {
   private readonly service: AuthService;
 
   @GrpcMethod(AUTH_SERVICE_NAME, 'Register')
-  private register(payload: RegisterRequestDto): Promise<RegisterResponse> {
-    return this.service.register(payload);
+  private async register(payload: RegisterRequestDto): Promise<RegisterResponse> {
+    const registeredUser = await this.service.register(payload);
+    return { error: null, status: HttpStatus.CREATED, data: { userId: registeredUser._id } };
   }
 
   @GrpcMethod(AUTH_SERVICE_NAME, 'Login')
