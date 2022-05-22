@@ -2,7 +2,7 @@ import { ConflictException, HttpStatus, Inject, Injectable, NotFoundException } 
 import { JwtService } from './jwt.service';
 import { RegisterRequestDto, LoginRequestDto, ValidateRequestDto, FindUserByIdRequestDto } from '../dto/auth.dto';
 import { User, UserDocument } from '../entities/user.entity';
-import { FindUserByIdResponse, LoginResponse, RegisterResponse, ValidateResponse } from '../dto/proto/auth.pb';
+import { FindUserByIdResponse, LoginResponse, ValidateResponse } from '../dto/proto/auth.pb';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
