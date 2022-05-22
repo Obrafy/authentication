@@ -82,4 +82,24 @@ export class AuthService {
 
     return { status: HttpStatus.OK, error: null, userId: decoded.id };
   }
+
+  public async findUserById({ userId }: FindUserByIdRequestDto): Promise<FindUserByIdResponse> {
+    const user = await this.authModel.findById(userId);
+
+    if (!user) throw new NotFoundException('User not found');
+
+    return {
+      status: HttpStatus.OK,
+      error: null,
+      user: {
+        ...user,
+        // Casting dates to integer for gRPC
+        createdAt: user.createdAt.getTime(),
+        updatedAt: user.updatedAt.getTime(),
+        lastLogin: user.lastLogin.getTime(),
+        // Roles is not implemented yet
+        roles: [],
+      },
+    };
+  }
 }

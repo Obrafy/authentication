@@ -16,6 +16,10 @@ export class User {
   @Prop()
   lastLogin: Date;
 
+  // Timestamps
+  createdAt: Date;
+  updatedAt: Date;
+
   // Schema Methods
   updateLastLogin: () => Promise<void>;
 }
