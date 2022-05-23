@@ -3,15 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 
 import { JwtService } from './jwt.service';
 
-import {
-  RegisterRequestDto,
-  LoginRequestDto,
-  ValidateRequestDto,
-  FindUserByIdRequestDto,
-  ActivateUserByIdRequestDto,
-  DeactivateUserByIdRequestDto,
-  RemoveUserByIdRequestDto,
-} from '../dto/auth.dto';
+import * as DTO from '../dto/auth.dto';
 
 import { User, UserDocument } from '../entities/user.entity';
 import { Model } from 'mongoose';
@@ -70,7 +62,7 @@ export class AuthService {
    * @param param.password The User's passsword
    * @returns The response status and possible errors
    */
-  public async register({ email, password }: RegisterRequestDto): Promise<UserDocument> {
+  public async register({ email, password }: DTO.RegisterRequestDto): Promise<UserDocument> {
     const user = await this._getUserByEmail(email);
 
     if (user) {
@@ -93,7 +85,7 @@ export class AuthService {
    * @param param.password The User's passsword
    * @returns The response status, possible errors and the authetication token
    */
-  public async login({ email, password }: LoginRequestDto): Promise<string> {
+  public async login({ email, password }: DTO.LoginRequestDto): Promise<string> {
     const user = await this._getUserByEmail(email);
 
     if (!user) {
@@ -122,7 +114,7 @@ export class AuthService {
    * @param param.token The authorization token
    * @returns The response status, possible errors and the user id
    */
-  public async validate({ token }: ValidateRequestDto): Promise<UserDocument> {
+  public async validate({ token }: DTO.ValidateRequestDto): Promise<UserDocument> {
     const decoded = await this.jwtService.verify(token);
 
     if (!decoded) {
@@ -148,7 +140,7 @@ export class AuthService {
    * @param param.userId The user id
    * @returns The user document object
    */
-  public async findUserById({ userId }: FindUserByIdRequestDto): Promise<UserDocument> {
+  public async findUserById({ userId }: DTO.FindUserByIdRequestDto): Promise<UserDocument> {
     const user = await this._getUserById(userId);
 
     if (!user) throw new NotFoundException('User not found');
@@ -160,7 +152,7 @@ export class AuthService {
    * Activates a user by its id
    * @param param.userId The user id
    */
-  public async activateUserById({ userId }: ActivateUserByIdRequestDto): Promise<void> {
+  public async activateUserById({ userId }: DTO.ActivateUserByIdRequestDto): Promise<void> {
     const user = await this._getUserById(userId);
 
     if (!user) throw new NotFoundException('User not found');
@@ -174,7 +166,7 @@ export class AuthService {
    * Deactivates a user by its id
    * @param param.userId The user id
    */
-  public async deactivateUserById({ userId }: DeactivateUserByIdRequestDto): Promise<void> {
+  public async deactivateUserById({ userId }: DTO.DeactivateUserByIdRequestDto): Promise<void> {
     const user = await this._getUserById(userId);
 
     if (!user) throw new NotFoundException('User not found');
@@ -188,7 +180,7 @@ export class AuthService {
    * Removes a user by its id
    * @param param.userId The user id
    */
-  public async removeUserById({ userId }: RemoveUserByIdRequestDto): Promise<void> {
+  public async removeUserById({ userId }: DTO.RemoveUserByIdRequestDto): Promise<void> {
     const user = await this._getUserById(userId);
 
     if (!user) throw new NotFoundException('User not found');
