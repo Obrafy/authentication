@@ -85,6 +85,11 @@ export class AuthService {
     return user;
   }
 
+  /**
+   * Finds a user by its id
+   * @param param.userId The user id
+   * @returns The user document object
+   */
   public async findUserById({ userId }: FindUserByIdRequestDto): Promise<UserDocument> {
     const user = await this.authModel.findById(userId);
 
