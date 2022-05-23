@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Exclude } from 'class-transformer';
 import { Document } from 'mongoose';
+import { Status } from 'src/common/dto/status.enum';
 import { Role } from './role.enum';
 
 export type UserDocument = User & Document;
@@ -19,6 +20,10 @@ export class User {
 
   @Prop({ required: false, default: [Role.USER] })
   roles: Role[];
+
+  // Record Status
+  @Prop({ required: false, default: Status.INACTIVE })
+  status: Status;
 
   // Timestamps
   createdAt: Date;

@@ -7,6 +7,7 @@ import { RegisterRequestDto, LoginRequestDto, ValidateRequestDto, FindUserByIdRe
 
 import { User, UserDocument } from '../entities/user.entity';
 import { Model } from 'mongoose';
+import { Status } from 'src/common/dto/status.enum';
 
 @Injectable()
 export class AuthService {
@@ -47,8 +48,14 @@ export class AuthService {
   public async login({ email, password }: LoginRequestDto): Promise<string> {
     const user = await this.authModel.findOne({ email });
 
-    if (!user) {
+    // If the user status is DELETED, treat it as if not found
+    if (!user || user.status === Status.DELETED) {
       throw new NotFoundException('User not found');
+    }
+
+    // If the user status is not ACTIVE, abort.
+    if (user.status !== Status.ACTIVE) {
+      throw new ForbiddenException('User not active');
     }
 
     const isPasswordValid: boolean = this.jwtService.isPasswordValid(password, user.password);
@@ -78,8 +85,12 @@ export class AuthService {
 
     const user = await this.jwtService.validateUser(decoded);
 
-    if (!user) {
-      throw new ConflictException('User not found');
+    if (!user || user.status === Status.DELETED) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.status !== Status.ACTIVE) {
+      throw new ForbiddenException('User not active');
     }
 
     return user;
