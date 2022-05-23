@@ -43,46 +43,74 @@ export interface RegisterResponse {
   data: RegisterResponseData | undefined;
 }
 
-/** Login */
+/**
+ * Login
+ * Request
+ */
 export interface LoginRequest {
   email: string;
   password: string;
 }
 
-export interface LoginResponse {
-  status: number;
-  error: string[];
+/** Response */
+export interface LoginResponseData {
   token: string;
 }
 
-/** Validate */
+export interface LoginResponse {
+  status: number;
+  error: string[];
+  data: LoginResponseData | undefined;
+}
+
+/**
+ * Validate
+ * Request
+ */
 export interface ValidateRequest {
   token: string;
+}
+
+/** Response */
+export interface ValidateResponseData {
+  userId: string;
 }
 
 export interface ValidateResponse {
   status: number;
   error: string[];
+  data: ValidateResponseData | undefined;
+}
+
+/**
+ * FindUserById
+ * Request
+ */
+export interface FindUserByIdRequest {
   userId: string;
 }
 
-/** FindUserById */
-export interface FindUserByIdRequest {
-  userId: string;
+/** Response */
+export interface FindUserByIdResponseData {
+  user: User | undefined;
 }
 
 export interface FindUserByIdResponse {
   status: number;
   error: string[];
-  user: User | undefined;
+  data: FindUserByIdResponseData | undefined;
 }
 
-/** UpdateUserRole */
+/**
+ * UpdateUserRole
+ * Request
+ */
 export interface UpdateUserRoleRequest {
   roles: Role[];
   userId: string;
 }
 
+/** Response */
 export interface UpdateUserRoleResponse {
   status: number;
   error: string[];
