@@ -3,7 +3,15 @@ import { InjectModel } from '@nestjs/mongoose';
 
 import { JwtService } from './jwt.service';
 
-import { RegisterRequestDto, LoginRequestDto, ValidateRequestDto, FindUserByIdRequestDto } from '../dto/auth.dto';
+import {
+  RegisterRequestDto,
+  LoginRequestDto,
+  ValidateRequestDto,
+  FindUserByIdRequestDto,
+  ActivateUserByIdRequestDto,
+  DeactivateUserByIdRequestDto,
+  RemoveUserByIdRequestDto,
+} from '../dto/auth.dto';
 
 import { User, UserDocument } from '../entities/user.entity';
 import { Model } from 'mongoose';
@@ -16,6 +24,46 @@ export class AuthService {
     @Inject(JwtService) private readonly jwtService: JwtService,
   ) {}
 
+  // Private Methods
+
+  /**
+   * Get an user by id
+   * @param userId The User's id
+   * @returns The response User object
+   */
+  private async _getUserById(userId: string): Promise<UserDocument> {
+    return this.authModel.findOne({ _id: userId, status: { $ne: Status.DELETED } });
+  }
+
+  /**
+   * Get an user by email
+   * @param email The User's email
+   * @returns The response User object
+   */
+  private async _getUserByEmail(email: string): Promise<UserDocument> {
+    return this.authModel.findOne({ email, status: { $ne: Status.DELETED } });
+  }
+
+  /**
+   * Get an active user by id
+   * @param userId The User's id
+   * @returns The response User object
+   */
+  private async _getActiveUserById(userId: string): Promise<UserDocument> {
+    return this.authModel.findOne({ _id: userId, status: Status.ACTIVE });
+  }
+
+  /**
+   * Get an active user by email
+   * @param email The User's email
+   * @returns The response User object
+   */
+  private async _getActiveUserByEmail(email: string): Promise<UserDocument> {
+    return this.authModel.findOne({ email, status: Status.ACTIVE });
+  }
+
+  // Public Methods
+
   /**
    * Registers a new User
    * @param param.email The User's email
@@ -23,9 +71,9 @@ export class AuthService {
    * @returns The response status and possible errors
    */
   public async register({ email, password }: RegisterRequestDto): Promise<UserDocument> {
-    const userExists = await this.authModel.exists({ email });
+    const user = await this._getUserByEmail(email);
 
-    if (userExists) {
+    if (user) {
       throw new ConflictException('User already exists');
     }
 
@@ -46,22 +94,20 @@ export class AuthService {
    * @returns The response status, possible errors and the authetication token
    */
   public async login({ email, password }: LoginRequestDto): Promise<string> {
-    const user = await this.authModel.findOne({ email });
+    const user = await this._getUserByEmail(email);
 
-    // If the user status is DELETED, treat it as if not found
-    if (!user || user.status === Status.DELETED) {
+    if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    // If the user status is not ACTIVE, abort.
     if (user.status !== Status.ACTIVE) {
-      throw new ForbiddenException('User not active');
+      throw new NotFoundException('User not active');
     }
 
     const isPasswordValid: boolean = this.jwtService.isPasswordValid(password, user.password);
 
     if (!isPasswordValid) {
-      throw new ForbiddenException('Wrong password');
+      throw new ForbiddenException('Invalid password');
     }
 
     const token: string = this.jwtService.generateToken(user);
@@ -85,6 +131,7 @@ export class AuthService {
 
     const user = await this.jwtService.validateUser(decoded);
 
+    // Since we're using jwtService's validateUSer method here, we're not validating user status, hence the validations below.
     if (!user || user.status === Status.DELETED) {
       throw new NotFoundException('User not found');
     }
@@ -102,10 +149,52 @@ export class AuthService {
    * @returns The user document object
    */
   public async findUserById({ userId }: FindUserByIdRequestDto): Promise<UserDocument> {
-    const user = await this.authModel.findById(userId);
+    const user = await this._getUserById(userId);
 
     if (!user) throw new NotFoundException('User not found');
 
     return user;
+  }
+
+  /**
+   * Activates a user by its id
+   * @param param.userId The user id
+   */
+  public async activateUserById({ userId }: ActivateUserByIdRequestDto): Promise<void> {
+    const user = await this._getUserById(userId);
+
+    if (!user) throw new NotFoundException('User not found');
+
+    user.status = Status.ACTIVE;
+
+    await user.save();
+  }
+
+  /**
+   * Deactivates a user by its id
+   * @param param.userId The user id
+   */
+  public async deactivateUserById({ userId }: DeactivateUserByIdRequestDto): Promise<void> {
+    const user = await this._getUserById(userId);
+
+    if (!user) throw new NotFoundException('User not found');
+
+    user.status = Status.INACTIVE;
+
+    await user.save();
+  }
+
+  /**
+   * Removes a user by its id
+   * @param param.userId The user id
+   */
+  public async removeUserById({ userId }: RemoveUserByIdRequestDto): Promise<void> {
+    const user = await this._getUserById(userId);
+
+    if (!user) throw new NotFoundException('User not found');
+
+    user.status = Status.DELETED;
+
+    await user.save();
   }
 }

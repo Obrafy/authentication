@@ -7,7 +7,7 @@ interface GenericResponse<T extends Record<string, any>> {
 }
 
 type MakeResponseType = <T extends Record<string, any>>(
-  data: T['data'],
+  data: T['data'] | null,
   options?: {
     httpStatus?: HttpStatus;
     error?: string[];

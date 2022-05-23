@@ -14,11 +14,20 @@ export enum Role {
   UNRECOGNIZED = -1,
 }
 
+/** Status Enum */
+export enum Status {
+  ACTIVE = 0,
+  INACTIVE = 1,
+  DELETED = 2,
+  UNRECOGNIZED = -1,
+}
+
 /** User Message */
 export interface User {
   email: string;
   lastLogin?: number | undefined;
   roles: Role[];
+  status: Status;
   createdAt: number;
   updatedAt: number;
 }
@@ -83,6 +92,40 @@ export interface ValidateResponse {
 }
 
 /**
+ * ActivateUser
+ * Request
+ */
+export interface ActivateUserByIdRequest {
+  userId: string;
+}
+
+/** Response */
+export interface ActivateUserByIdResponseData {}
+
+export interface ActivateUserByIdResponse {
+  status: number;
+  error: string[];
+  data: ActivateUserByIdResponseData | undefined;
+}
+
+/**
+ * DeativateUser
+ * Request
+ */
+export interface DeactivateUserByIdRequest {
+  userId: string;
+}
+
+/** Response */
+export interface DeactivateUserByIdResponseData {}
+
+export interface DeactivateUserByIdResponse {
+  status: number;
+  error: string[];
+  data: DeactivateUserByIdResponseData | undefined;
+}
+
+/**
  * FindUserById
  * Request
  */
@@ -99,6 +142,23 @@ export interface FindUserByIdResponse {
   status: number;
   error: string[];
   data: FindUserByIdResponseData | undefined;
+}
+
+/**
+ * RemoveUserById
+ * Request
+ */
+export interface RemoveUserByIdRequest {
+  userId: string;
+}
+
+/** Response */
+export interface RemoveUserByIdResponseData {}
+
+export interface RemoveUserByIdResponse {
+  status: number;
+  error: string[];
+  data: RemoveUserByIdResponseData | undefined;
 }
 
 /**
@@ -143,6 +203,16 @@ export interface AuthServiceClient {
 
   findUserById(request: FindUserByIdRequest): Observable<FindUserByIdResponse>;
 
+  removeUserById(request: RemoveUserByIdRequest): Observable<RemoveUserByIdResponse>;
+
+  /** User Status Mangement */
+
+  activateUserById(request: ActivateUserByIdRequest): Observable<ActivateUserByIdResponse>;
+
+  deactivateUserById(request: DeactivateUserByIdRequest): Observable<DeactivateUserByIdResponse>;
+
+  /** User Role Management */
+
   updateUserRole(request: UpdateUserRoleRequest): Observable<UpdateUserRoleResponse>;
 
   /** Skill Management */
@@ -167,6 +237,22 @@ export interface AuthServiceController {
     request: FindUserByIdRequest,
   ): Promise<FindUserByIdResponse> | Observable<FindUserByIdResponse> | FindUserByIdResponse;
 
+  removeUserById(
+    request: RemoveUserByIdRequest,
+  ): Promise<RemoveUserByIdResponse> | Observable<RemoveUserByIdResponse> | RemoveUserByIdResponse;
+
+  /** User Status Mangement */
+
+  activateUserById(
+    request: ActivateUserByIdRequest,
+  ): Promise<ActivateUserByIdResponse> | Observable<ActivateUserByIdResponse> | ActivateUserByIdResponse;
+
+  deactivateUserById(
+    request: DeactivateUserByIdRequest,
+  ): Promise<DeactivateUserByIdResponse> | Observable<DeactivateUserByIdResponse> | DeactivateUserByIdResponse;
+
+  /** User Role Management */
+
   updateUserRole(
     request: UpdateUserRoleRequest,
   ): Promise<UpdateUserRoleResponse> | Observable<UpdateUserRoleResponse> | UpdateUserRoleResponse;
@@ -178,7 +264,17 @@ export interface AuthServiceController {
 
 export function AuthServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ['register', 'login', 'validate', 'findUserById', 'updateUserRole', 'skill'];
+    const grpcMethods: string[] = [
+      'register',
+      'login',
+      'validate',
+      'findUserById',
+      'removeUserById',
+      'activateUserById',
+      'deactivateUserById',
+      'updateUserRole',
+      'skill',
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod('AuthService', method)(constructor.prototype[method], method, descriptor);
