@@ -1,4 +1,11 @@
-import { ConflictException, ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { JwtService } from './jwt.service';
@@ -65,9 +72,7 @@ export class AuthService {
   public async register({ email, password }: DTO.RegisterRequestDto): Promise<UserDocument> {
     const user = await this._getUserByEmail(email);
 
-    if (user) {
-      throw new ConflictException('User already exists');
-    }
+    if (user) throw new ConflictException('User already exists');
 
     const newUser = await this.authModel.create({
       email,
@@ -88,13 +93,9 @@ export class AuthService {
   public async login({ email, password }: DTO.LoginRequestDto): Promise<string> {
     const user = await this._getUserByEmail(email);
 
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    if (!user) throw new NotFoundException('User not found');
 
-    if (user.status !== Status.ACTIVE) {
-      throw new NotFoundException('User not active');
-    }
+    if (user.status !== Status.ACTIVE) throw new NotFoundException('User not active');
 
     const isPasswordValid: boolean = this.jwtService.isPasswordValid(password, user.password);
 
@@ -117,20 +118,14 @@ export class AuthService {
   public async validate({ token }: DTO.ValidateRequestDto): Promise<UserDocument> {
     const decoded = await this.jwtService.verify(token);
 
-    if (!decoded) {
-      throw new ForbiddenException('Invalid token');
-    }
+    if (!decoded) throw new ForbiddenException('Invalid token');
 
     const user = await this.jwtService.validateUser(decoded);
 
-    // Since we're using jwtService's validateUSer method here, we're not validating user status, hence the validations below.
-    if (!user || user.status === Status.DELETED) {
-      throw new NotFoundException('User not found');
-    }
+    // Since we're using jwtService's validateUser method here, we're not validating user status, hence the validations below.
+    if (!user || user.status === Status.DELETED) throw new NotFoundException('User not found');
 
-    if (user.status !== Status.ACTIVE) {
-      throw new ForbiddenException('User not active');
-    }
+    if (user.status !== Status.ACTIVE) throw new ForbiddenException('User not active');
 
     return user;
   }
@@ -215,6 +210,9 @@ export class AuthService {
     const user = await this._getUserById(userId);
 
     if (!user) throw new NotFoundException('User not found');
+
+    if (user.roles.length == 1)
+      throw new UnprocessableEntityException('The user must have at least one active role at all times');
 
     if (user.roles.includes(role)) {
       user.roles.splice(user.roles.indexOf(role), 1);
