@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 
 import * as bcrypt from 'bcryptjs';
 import { Model } from 'mongoose';
+import { AUTHENTICATION_ERROR_MESSAGES_KEYS } from 'src/common/error-messages/error-messages.interface';
 
 import { User, UserDocument } from '../entities/user.entity';
 
@@ -73,7 +74,7 @@ export class JwtService {
     try {
       return this.jwt.verify(token);
     } catch (err) {
-      throw new ForbiddenException();
+      throw new ForbiddenException(AUTHENTICATION_ERROR_MESSAGES_KEYS.INVALID_TOKEN);
     }
   }
 }
