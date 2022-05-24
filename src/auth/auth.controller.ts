@@ -70,4 +70,20 @@ export class AuthController {
 
     return makeResponse<PROTO.RemoveUserByIdResponse>(null);
   }
+
+  @GrpcMethod(PROTO.AUTH_SERVICE_NAME, 'AddRoleToUser')
+  private async addRoleToUser(payload: DTO.AddRoleToUserRequestDto): Promise<PROTO.AddRoleToUserResponse> {
+    await this.service.addRoleToUser(payload);
+
+    return makeResponse<PROTO.AddRoleToUserResponse>(null);
+  }
+
+  @GrpcMethod(PROTO.AUTH_SERVICE_NAME, 'RemoveRoleFromUser')
+  private async removeRoleFromUser(
+    payload: DTO.RemoveRoleFromUserRequestDto,
+  ): Promise<PROTO.RemoveRoleFromUserResponse> {
+    await this.service.removeRoleFromUser(payload);
+
+    return makeResponse<PROTO.RemoveRoleFromUserResponse>(null);
+  }
 }

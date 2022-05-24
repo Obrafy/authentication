@@ -58,6 +58,7 @@ export class RemoveRoleFromUserRequestDto implements PROTO.RemoveRoleFromUserReq
   @IsMongoId()
   public readonly userId: string;
 
-  @IsEnum(PROTO.Role, { message: `role must be a valid Role (${Object.keys(PROTO.Role).join(', ')})` })
-  public readonly role: PROTO.Role;
+  @TransformRoleEnum()
+  @IsEnum(Role, { message: `role must be a valid Role (${Object.keys(Role).join(', ')})` })
+  public readonly role: Role;
 }

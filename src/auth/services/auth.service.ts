@@ -189,4 +189,36 @@ export class AuthService {
 
     await user.save();
   }
+
+  /**
+   * Adds a given role to the user
+   * @param param.userId The user id
+   * @param param.role The role to be added
+   */
+  public async addRoleToUser({ userId, role }: DTO.AddRoleToUserRequestDto): Promise<void> {
+    const user = await this._getUserById(userId);
+
+    if (!user) throw new NotFoundException('User not found');
+
+    if (!user.roles.includes(role)) {
+      user.roles.push(role);
+      await user.save();
+    }
+  }
+
+  /**
+   * Removes a given role from the user
+   * @param param.userId The user id
+   * @param param.role The role to be removed
+   */
+  public async removeRoleFromUser({ userId, role }: DTO.RemoveRoleFromUserRequestDto): Promise<void> {
+    const user = await this._getUserById(userId);
+
+    if (!user) throw new NotFoundException('User not found');
+
+    if (user.roles.includes(role)) {
+      user.roles.splice(user.roles.indexOf(role), 1);
+      await user.save();
+    }
+  }
 }
