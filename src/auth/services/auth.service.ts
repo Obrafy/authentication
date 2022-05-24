@@ -1,11 +1,7 @@
-import {
-  ConflictException,
-  ForbiddenException,
-  Inject,
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+
+import * as EXCEPTIONS from '@nestjs/common/exceptions';
+
 import { InjectModel } from '@nestjs/mongoose';
 
 import { JwtService } from './jwt.service';
@@ -14,7 +10,9 @@ import * as DTO from '../dto/auth.dto';
 
 import { User, UserDocument } from '../entities/user.entity';
 import { Model } from 'mongoose';
+
 import { Status } from 'src/common/dto/status.enum';
+import { AUTHENTICATION_ERROR_MESSAGES_KEYS } from 'src/common/error-messages/error-messages.interface';
 
 @Injectable()
 export class AuthService {
@@ -72,7 +70,7 @@ export class AuthService {
   public async register({ email, password }: DTO.RegisterRequestDto): Promise<UserDocument> {
     const user = await this._getUserByEmail(email);
 
-    if (user) throw new ConflictException('User already exists');
+    if (user) throw new EXCEPTIONS.ConflictException(AUTHENTICATION_ERROR_MESSAGES_KEYS.USER_ALREADY_EXISTS);
 
     const newUser = await this.authModel.create({
       email,
@@ -93,14 +91,15 @@ export class AuthService {
   public async login({ email, password }: DTO.LoginRequestDto): Promise<string> {
     const user = await this._getUserByEmail(email);
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new EXCEPTIONS.NotFoundException(AUTHENTICATION_ERROR_MESSAGES_KEYS.USER_NOT_FOUND);
 
-    if (user.status !== Status.ACTIVE) throw new NotFoundException('User not active');
+    if (user.status !== Status.ACTIVE)
+      throw new EXCEPTIONS.NotFoundException(AUTHENTICATION_ERROR_MESSAGES_KEYS.USER_NOT_ACTIVE);
 
     const isPasswordValid: boolean = this.jwtService.isPasswordValid(password, user.password);
 
     if (!isPasswordValid) {
-      throw new ForbiddenException('Invalid password');
+      throw new EXCEPTIONS.ForbiddenException(AUTHENTICATION_ERROR_MESSAGES_KEYS.INVALID_PASSWORD);
     }
 
     const token: string = this.jwtService.generateToken(user);
@@ -118,14 +117,16 @@ export class AuthService {
   public async validate({ token }: DTO.ValidateRequestDto): Promise<UserDocument> {
     const decoded = await this.jwtService.verify(token);
 
-    if (!decoded) throw new ForbiddenException('Invalid token');
+    if (!decoded) throw new EXCEPTIONS.ForbiddenException(AUTHENTICATION_ERROR_MESSAGES_KEYS.INVALID_TOKEN);
 
     const user = await this.jwtService.validateUser(decoded);
 
     // Since we're using jwtService's validateUser method here, we're not validating user status, hence the validations below.
-    if (!user || user.status === Status.DELETED) throw new NotFoundException('User not found');
+    if (!user || user.status === Status.DELETED)
+      throw new EXCEPTIONS.NotFoundException(AUTHENTICATION_ERROR_MESSAGES_KEYS.USER_NOT_FOUND);
 
-    if (user.status !== Status.ACTIVE) throw new ForbiddenException('User not active');
+    if (user.status !== Status.ACTIVE)
+      throw new EXCEPTIONS.ForbiddenException(AUTHENTICATION_ERROR_MESSAGES_KEYS.USER_NOT_ACTIVE);
 
     return user;
   }
@@ -138,7 +139,7 @@ export class AuthService {
   public async findUserById({ userId }: DTO.FindUserByIdRequestDto): Promise<UserDocument> {
     const user = await this._getUserById(userId);
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new EXCEPTIONS.NotFoundException(AUTHENTICATION_ERROR_MESSAGES_KEYS.USER_NOT_FOUND);
 
     return user;
   }
@@ -150,7 +151,7 @@ export class AuthService {
   public async activateUserById({ userId }: DTO.ActivateUserByIdRequestDto): Promise<void> {
     const user = await this._getUserById(userId);
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new EXCEPTIONS.NotFoundException(AUTHENTICATION_ERROR_MESSAGES_KEYS.USER_NOT_FOUND);
 
     user.status = Status.ACTIVE;
 
@@ -164,7 +165,7 @@ export class AuthService {
   public async deactivateUserById({ userId }: DTO.DeactivateUserByIdRequestDto): Promise<void> {
     const user = await this._getUserById(userId);
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new EXCEPTIONS.NotFoundException(AUTHENTICATION_ERROR_MESSAGES_KEYS.USER_NOT_FOUND);
 
     user.status = Status.INACTIVE;
 
@@ -178,7 +179,7 @@ export class AuthService {
   public async removeUserById({ userId }: DTO.RemoveUserByIdRequestDto): Promise<void> {
     const user = await this._getUserById(userId);
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new EXCEPTIONS.NotFoundException(AUTHENTICATION_ERROR_MESSAGES_KEYS.USER_NOT_FOUND);
 
     user.status = Status.DELETED;
 
@@ -193,7 +194,7 @@ export class AuthService {
   public async addRoleToUser({ userId, role }: DTO.AddRoleToUserRequestDto): Promise<void> {
     const user = await this._getUserById(userId);
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new EXCEPTIONS.NotFoundException(AUTHENTICATION_ERROR_MESSAGES_KEYS.USER_NOT_FOUND);
 
     if (!user.roles.includes(role)) {
       user.roles.push(role);
@@ -209,10 +210,10 @@ export class AuthService {
   public async removeRoleFromUser({ userId, role }: DTO.RemoveRoleFromUserRequestDto): Promise<void> {
     const user = await this._getUserById(userId);
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new EXCEPTIONS.NotFoundException(AUTHENTICATION_ERROR_MESSAGES_KEYS.USER_NOT_FOUND);
 
     if (user.roles.length == 1)
-      throw new UnprocessableEntityException('The user must have at least one active role at all times');
+      throw new EXCEPTIONS.UnprocessableEntityException(AUTHENTICATION_ERROR_MESSAGES_KEYS.AT_LEAST_ONE_ROLE);
 
     if (user.roles.includes(role)) {
       user.roles.splice(user.roles.indexOf(role), 1);

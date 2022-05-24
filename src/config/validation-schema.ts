@@ -7,6 +7,8 @@ export default Joi.object<ConfigInterface>({
   HOST: Joi.string().hostname().default('localhost'),
   PORT: Joi.number().default(3010),
 
+  LANGUAGE: Joi.string().valid('pt-br', 'en-us').default('en-us'),
+
   DB_BASE_URI: Joi.string(),
   DB_NAME: Joi.string(),
   DB_PASSWORD: Joi.string(),
