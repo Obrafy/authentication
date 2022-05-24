@@ -162,18 +162,39 @@ export interface RemoveUserByIdResponse {
 }
 
 /**
- * UpdateUserRole
+ * AddRoleToUser
  * Request
  */
-export interface UpdateUserRoleRequest {
-  roles: Role[];
+export interface AddRoleToUserRequest {
   userId: string;
+  role: Role;
 }
 
 /** Response */
-export interface UpdateUserRoleResponse {
+export interface AddRoleToUserResponseData {}
+
+export interface AddRoleToUserResponse {
   status: number;
   error: string[];
+  data: AddRoleToUserResponseData | undefined;
+}
+
+/**
+ * RemoveRoleFromUser
+ * Request
+ */
+export interface RemoveRoleFromUserRequest {
+  userId: string;
+  role: Role;
+}
+
+/** Response */
+export interface RemoveRoleFromUserResponseData {}
+
+export interface RemoveRoleFromUserResponse {
+  status: number;
+  error: string[];
+  data: RemoveRoleFromUserResponseData | undefined;
 }
 
 /** Skill */
@@ -213,7 +234,9 @@ export interface AuthServiceClient {
 
   /** User Role Management */
 
-  updateUserRole(request: UpdateUserRoleRequest): Observable<UpdateUserRoleResponse>;
+  addRoleToUser(request: AddRoleToUserRequest): Observable<AddRoleToUserResponse>;
+
+  removeRoleFromUser(request: RemoveRoleFromUserRequest): Observable<RemoveRoleFromUserResponse>;
 
   /** Skill Management */
 
@@ -253,9 +276,13 @@ export interface AuthServiceController {
 
   /** User Role Management */
 
-  updateUserRole(
-    request: UpdateUserRoleRequest,
-  ): Promise<UpdateUserRoleResponse> | Observable<UpdateUserRoleResponse> | UpdateUserRoleResponse;
+  addRoleToUser(
+    request: AddRoleToUserRequest,
+  ): Promise<AddRoleToUserResponse> | Observable<AddRoleToUserResponse> | AddRoleToUserResponse;
+
+  removeRoleFromUser(
+    request: RemoveRoleFromUserRequest,
+  ): Promise<RemoveRoleFromUserResponse> | Observable<RemoveRoleFromUserResponse> | RemoveRoleFromUserResponse;
 
   /** Skill Management */
 
@@ -272,7 +299,8 @@ export function AuthServiceControllerMethods() {
       'removeUserById',
       'activateUserById',
       'deactivateUserById',
-      'updateUserRole',
+      'addRoleToUser',
+      'removeRoleFromUser',
       'skill',
     ];
     for (const method of grpcMethods) {
