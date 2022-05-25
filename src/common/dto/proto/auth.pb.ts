@@ -32,6 +32,14 @@ export interface User {
   updatedAt: number;
 }
 
+export interface SkillCategory {
+  name: string;
+  description: string;
+  status: Status;
+  createdAt: number;
+  updatedAt: number;
+}
+
 /**
  * Register
  * Request
@@ -218,6 +226,44 @@ export interface AddSkillCategoryResponse {
 }
 
 /**
+ * FindSkillCategoryById
+ * Request
+ */
+export interface FindSkillCategoryByIdRequest {
+  skillCategoryId: string;
+}
+
+/** Response */
+export interface FindSkillCategoryByIdResponseData {
+  skillCategory: SkillCategory | undefined;
+}
+
+export interface FindSkillCategoryByIdResponse {
+  status: number;
+  error: string[];
+  data: FindSkillCategoryByIdResponseData | undefined;
+}
+
+/**
+ * FindSkillCategoryByName
+ * Request
+ */
+export interface FindSkillCategoryByNameRequest {
+  skillCategoryName: string;
+}
+
+/** Response */
+export interface FindSkillCategoryByNameResponseData {
+  skillCategory: SkillCategory | undefined;
+}
+
+export interface FindSkillCategoryByNameResponse {
+  status: number;
+  error: string[];
+  data: FindSkillCategoryByNameResponseData | undefined;
+}
+
+/**
  * AddSkill
  * Request
  */
@@ -364,6 +410,10 @@ export interface SkillManagementServiceClient {
 
   addSkillCategory(request: AddSkillCategoryRequest): Observable<AddSkillCategoryResponse>;
 
+  findSkillCategoryById(request: FindSkillCategoryByIdRequest): Observable<FindSkillCategoryByIdResponse>;
+
+  findSkillCategoryByName(request: FindSkillCategoryByNameRequest): Observable<FindSkillCategoryByNameResponse>;
+
   /** Skill Management */
 
   addSkill(request: AddSkillRequest): Observable<AddSkillResponse>;
@@ -378,6 +428,17 @@ export interface SkillManagementServiceController {
     request: AddSkillCategoryRequest,
   ): Promise<AddSkillCategoryResponse> | Observable<AddSkillCategoryResponse> | AddSkillCategoryResponse;
 
+  findSkillCategoryById(
+    request: FindSkillCategoryByIdRequest,
+  ): Promise<FindSkillCategoryByIdResponse> | Observable<FindSkillCategoryByIdResponse> | FindSkillCategoryByIdResponse;
+
+  findSkillCategoryByName(
+    request: FindSkillCategoryByNameRequest,
+  ):
+    | Promise<FindSkillCategoryByNameResponse>
+    | Observable<FindSkillCategoryByNameResponse>
+    | FindSkillCategoryByNameResponse;
+
   /** Skill Management */
 
   addSkill(request: AddSkillRequest): Promise<AddSkillResponse> | Observable<AddSkillResponse> | AddSkillResponse;
@@ -385,7 +446,7 @@ export interface SkillManagementServiceController {
 
 export function SkillManagementServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ['addSkillCategory', 'addSkill'];
+    const grpcMethods: string[] = ['addSkillCategory', 'findSkillCategoryById', 'findSkillCategoryByName', 'addSkill'];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod('SkillManagementService', method)(constructor.prototype[method], method, descriptor);

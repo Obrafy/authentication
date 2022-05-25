@@ -20,3 +20,13 @@ export class AddSkillRequestDto implements PROTO.AddSkillRequest {
   @IsOptional()
   public readonly category?: string;
 }
+
+export class FindSkillCategoryByIdRequestDto implements PROTO.FindSkillCategoryByIdRequest {
+  @IsMongoId()
+  skillCategoryId: string;
+}
+
+export class FindSkillCategoryByNameRequestDto implements PROTO.FindSkillCategoryByNameRequest {
+  @IsString()
+  skillCategoryName: string;
+}

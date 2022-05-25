@@ -11,6 +11,7 @@ import makeResponse from 'src/common/helpers/make-response';
 export class SkillController {
   @Inject(SkillService) private readonly service: SkillService;
 
+  // Skill Category Management
   @GrpcMethod(PROTO.SKILL_MANAGEMENT_SERVICE_NAME, 'AddSkillCategory')
   private async addSkillCategory(payload: DTO.AddSkillCategoryRequestDto): Promise<PROTO.AddSkillCategoryResponse> {
     const { _id: skillCategoryId } = await this.service.addSkillCategory(payload);
@@ -18,6 +19,43 @@ export class SkillController {
     return makeResponse<PROTO.AddSkillCategoryResponse>({ skillCategoryId });
   }
 
+  @GrpcMethod(PROTO.SKILL_MANAGEMENT_SERVICE_NAME, 'FindSkillCategoryById')
+  private async findSkillCategoryById(
+    payload: DTO.FindSkillCategoryByIdRequestDto,
+  ): Promise<PROTO.FindSkillCategoryByIdResponse> {
+    const skillCategory = await this.service.findSkillCategoryById(payload);
+
+    return makeResponse<PROTO.FindSkillCategoryByIdResponse>({
+      skillCategory: {
+        name: skillCategory.name,
+        description: skillCategory.description,
+        status: skillCategory.status,
+        // Casting dates to integer for gRPC
+        createdAt: skillCategory.createdAt.getTime(),
+        updatedAt: skillCategory.updatedAt.getTime(),
+      },
+    });
+  }
+
+  @GrpcMethod(PROTO.SKILL_MANAGEMENT_SERVICE_NAME, 'FindSkillCategoryByName')
+  private async findSkillCategoryByName(
+    payload: DTO.FindSkillCategoryByNameRequestDto,
+  ): Promise<PROTO.FindSkillCategoryByNameResponse> {
+    const skillCategory = await this.service.findSkillCategoryByName(payload);
+
+    return makeResponse<PROTO.FindSkillCategoryByNameResponse>({
+      skillCategory: {
+        name: skillCategory.name,
+        description: skillCategory.description,
+        status: skillCategory.status,
+        // Casting dates to integer for gRPC
+        createdAt: skillCategory.createdAt.getTime(),
+        updatedAt: skillCategory.updatedAt.getTime(),
+      },
+    });
+  }
+
+  // Skill Management
   @GrpcMethod(PROTO.SKILL_MANAGEMENT_SERVICE_NAME, 'AddSkill')
   private async addSkill(payload: DTO.AddSkillRequestDto): Promise<PROTO.AddSkillResponse> {
     const { _id: skillId } = await this.service.addSkill(payload);

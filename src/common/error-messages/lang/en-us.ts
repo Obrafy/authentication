@@ -1,6 +1,9 @@
 import { ErrorMessages } from '../error-messages.interface';
 
 const errorMessagesEnUs: ErrorMessages = {
+  DATABASE: {
+    DUPLICATE_KEY: 'a record already exists for key :key: and value :value: (duplicate entry)',
+  },
   AUTHENTICATION_SERVICE: {
     USER_ALREADY_EXISTS: 'a user already exists for the given email',
     USER_NOT_FOUND: 'the user was not found',
@@ -9,8 +12,9 @@ const errorMessagesEnUs: ErrorMessages = {
     INVALID_TOKEN: 'the provided token is not valid',
     AT_LEAST_ONE_ROLE: 'the user must have at least one active role at all times',
   },
-  DATABASE: {
-    DUPLICATE_KEY: 'a recosrd already exists for key :key: and value :value: (duplicate entry)',
+  SKILL_SERVICE: {
+    SKILL_NOT_FOUND: 'the skill was not found',
+    SKILL_CATEGORY_NOT_FOUND: 'the skill category was not found',
   },
 };
 
