@@ -31,7 +31,7 @@ export class AuthController {
     return makeResponse<PROTO.ValidateResponse>({ userId: user._id });
   }
 
-  @GrpcMethod(PROTO.AUTH_SERVICE_NAME, 'FindUserById')
+  @GrpcMethod(PROTO.USER_MANAGEMENT_SERVICE_NAME, 'FindUserById')
   private async findUserById(payload: DTO.FindUserByIdRequestDto): Promise<PROTO.FindUserByIdResponse> {
     const userData = await this.service.findUserById(payload);
 
@@ -48,14 +48,14 @@ export class AuthController {
     });
   }
 
-  @GrpcMethod(PROTO.AUTH_SERVICE_NAME, 'ActivateUserById')
+  @GrpcMethod(PROTO.USER_MANAGEMENT_SERVICE_NAME, 'ActivateUserById')
   private async activateUserById(payload: DTO.ActivateUserByIdRequestDto): Promise<PROTO.ActivateUserByIdResponse> {
     await this.service.activateUserById(payload);
 
     return makeResponse<PROTO.ActivateUserByIdResponse>(null);
   }
 
-  @GrpcMethod(PROTO.AUTH_SERVICE_NAME, 'DeactivateUserById')
+  @GrpcMethod(PROTO.USER_MANAGEMENT_SERVICE_NAME, 'DeactivateUserById')
   private async deactivateUserById(
     payload: DTO.DeactivateUserByIdRequestDto,
   ): Promise<PROTO.DeactivateUserByIdResponse> {
@@ -64,21 +64,21 @@ export class AuthController {
     return makeResponse<PROTO.DeactivateUserByIdResponse>(null);
   }
 
-  @GrpcMethod(PROTO.AUTH_SERVICE_NAME, 'RemoveUserById')
+  @GrpcMethod(PROTO.USER_MANAGEMENT_SERVICE_NAME, 'RemoveUserById')
   private async removeUserById(payload: DTO.RemoveUserByIdRequestDto): Promise<PROTO.RemoveUserByIdResponse> {
     await this.service.removeUserById(payload);
 
     return makeResponse<PROTO.RemoveUserByIdResponse>(null);
   }
 
-  @GrpcMethod(PROTO.AUTH_SERVICE_NAME, 'AddRoleToUser')
+  @GrpcMethod(PROTO.USER_MANAGEMENT_SERVICE_NAME, 'AddRoleToUser')
   private async addRoleToUser(payload: DTO.AddRoleToUserRequestDto): Promise<PROTO.AddRoleToUserResponse> {
     await this.service.addRoleToUser(payload);
 
     return makeResponse<PROTO.AddRoleToUserResponse>(null);
   }
 
-  @GrpcMethod(PROTO.AUTH_SERVICE_NAME, 'RemoveRoleFromUser')
+  @GrpcMethod(PROTO.USER_MANAGEMENT_SERVICE_NAME, 'RemoveRoleFromUser')
   private async removeRoleFromUser(
     payload: DTO.RemoveRoleFromUserRequestDto,
   ): Promise<PROTO.RemoveRoleFromUserResponse> {

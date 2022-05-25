@@ -197,29 +197,89 @@ export interface RemoveRoleFromUserResponse {
   data: RemoveRoleFromUserResponseData | undefined;
 }
 
-/** Skill */
-export interface SkillRequest {
+/**
+ * AddSkillCategory
+ * Request
+ */
+export interface AddSkillCategoryRequest {
+  name: string;
+  description: string;
+}
+
+/** Response */
+export interface AddSkillCategoryResponseData {
+  skillCategoryId: string;
+}
+
+export interface AddSkillCategoryResponse {
+  status: number;
+  error: string[];
+  data: AddSkillCategoryResponseData | undefined;
+}
+
+/**
+ * AddSkill
+ * Request
+ */
+export interface AddSkillRequest {
+  name: string;
+  description: string;
+  category?: string | undefined;
+}
+
+/** Response */
+export interface AddSkillResponseData {
   skillId: string;
 }
 
-export interface SkillResponse {
+export interface AddSkillResponse {
   status: number;
   error: string[];
+  data: AddSkillResponseData | undefined;
 }
 
 export const AUTH_PACKAGE_NAME = 'auth';
 
-/** Service */
+/** Authentication Service */
 
 export interface AuthServiceClient {
-  /** Pure Authentication */
-
   register(request: RegisterRequest): Observable<RegisterResponse>;
 
   login(request: LoginRequest): Observable<LoginResponse>;
 
   validate(request: ValidateRequest): Observable<ValidateResponse>;
+}
 
+/** Authentication Service */
+
+export interface AuthServiceController {
+  register(request: RegisterRequest): Promise<RegisterResponse> | Observable<RegisterResponse> | RegisterResponse;
+
+  login(request: LoginRequest): Promise<LoginResponse> | Observable<LoginResponse> | LoginResponse;
+
+  validate(request: ValidateRequest): Promise<ValidateResponse> | Observable<ValidateResponse> | ValidateResponse;
+}
+
+export function AuthServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = ['register', 'login', 'validate'];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod('AuthService', method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod('AuthService', method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const AUTH_SERVICE_NAME = 'AuthService';
+
+/** User Management Service */
+
+export interface UserManagementServiceClient {
   /** User Management */
 
   findUserById(request: FindUserByIdRequest): Observable<FindUserByIdResponse>;
@@ -237,23 +297,11 @@ export interface AuthServiceClient {
   addRoleToUser(request: AddRoleToUserRequest): Observable<AddRoleToUserResponse>;
 
   removeRoleFromUser(request: RemoveRoleFromUserRequest): Observable<RemoveRoleFromUserResponse>;
-
-  /** Skill Management */
-
-  skill(request: SkillRequest): Observable<SkillResponse>;
 }
 
-/** Service */
+/** User Management Service */
 
-export interface AuthServiceController {
-  /** Pure Authentication */
-
-  register(request: RegisterRequest): Promise<RegisterResponse> | Observable<RegisterResponse> | RegisterResponse;
-
-  login(request: LoginRequest): Promise<LoginResponse> | Observable<LoginResponse> | LoginResponse;
-
-  validate(request: ValidateRequest): Promise<ValidateResponse> | Observable<ValidateResponse> | ValidateResponse;
-
+export interface UserManagementServiceController {
   /** User Management */
 
   findUserById(
@@ -283,39 +331,74 @@ export interface AuthServiceController {
   removeRoleFromUser(
     request: RemoveRoleFromUserRequest,
   ): Promise<RemoveRoleFromUserResponse> | Observable<RemoveRoleFromUserResponse> | RemoveRoleFromUserResponse;
-
-  /** Skill Management */
-
-  skill(request: SkillRequest): Promise<SkillResponse> | Observable<SkillResponse> | SkillResponse;
 }
 
-export function AuthServiceControllerMethods() {
+export function UserManagementServiceControllerMethods() {
   return function (constructor: Function) {
     const grpcMethods: string[] = [
-      'register',
-      'login',
-      'validate',
       'findUserById',
       'removeUserById',
       'activateUserById',
       'deactivateUserById',
       'addRoleToUser',
       'removeRoleFromUser',
-      'skill',
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod('AuthService', method)(constructor.prototype[method], method, descriptor);
+      GrpcMethod('UserManagementService', method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod('AuthService', method)(constructor.prototype[method], method, descriptor);
+      GrpcStreamMethod('UserManagementService', method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
 
-export const AUTH_SERVICE_NAME = 'AuthService';
+export const USER_MANAGEMENT_SERVICE_NAME = 'UserManagementService';
+
+/** Skill Management Service */
+
+export interface SkillManagementServiceClient {
+  /** Skill Category Management */
+
+  addSkillCategory(request: AddSkillCategoryRequest): Observable<AddSkillCategoryResponse>;
+
+  /** Skill Management */
+
+  addSkill(request: AddSkillRequest): Observable<AddSkillResponse>;
+}
+
+/** Skill Management Service */
+
+export interface SkillManagementServiceController {
+  /** Skill Category Management */
+
+  addSkillCategory(
+    request: AddSkillCategoryRequest,
+  ): Promise<AddSkillCategoryResponse> | Observable<AddSkillCategoryResponse> | AddSkillCategoryResponse;
+
+  /** Skill Management */
+
+  addSkill(request: AddSkillRequest): Promise<AddSkillResponse> | Observable<AddSkillResponse> | AddSkillResponse;
+}
+
+export function SkillManagementServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = ['addSkillCategory', 'addSkill'];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod('SkillManagementService', method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod('SkillManagementService', method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const SKILL_MANAGEMENT_SERVICE_NAME = 'SkillManagementService';
 
 // If you get a compile-error about 'Constructor<Long> and ... have no overlap',
 // add '--ts_proto_opt=esModuleInterop=true' as a flag when calling 'protoc'.
