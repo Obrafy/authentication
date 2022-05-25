@@ -56,7 +56,7 @@ export class CatchAllExceptionFilter implements ExceptionFilter {
         }
 
         return {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          status: HttpStatus.CONFLICT,
           error: [
             getLanguageSpecificErrorMessage(
               this.configService.get('LANGUAGE', { infer: true }),
