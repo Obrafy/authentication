@@ -8,7 +8,7 @@ export interface ConfigInterface {
   HOST: string;
   PORT: number;
 
-  LANGUAGE: string;
+  SERVER_LANG: string;
 
   DB_USER: string;
   DB_PASSWORD: string;

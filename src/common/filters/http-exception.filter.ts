@@ -26,12 +26,12 @@ export class CatchAllExceptionFilter implements ExceptionFilter {
       if (Array.isArray(response.message)) {
         response.message.forEach((r: string) =>
           errorMessages.push(
-            getLanguageSpecificErrorMessage(this.configService.get('LANGUAGE', { infer: true }), r) ?? r,
+            getLanguageSpecificErrorMessage(this.configService.get('SERVER_LANG', { infer: true }), r) ?? r,
           ),
         );
       } else {
         errorMessages.push(
-          getLanguageSpecificErrorMessage(this.configService.get('LANGUAGE', { infer: true }), response.message) ??
+          getLanguageSpecificErrorMessage(this.configService.get('SERVER_LANG', { infer: true }), response.message) ??
             response.message,
         );
       }
@@ -59,7 +59,7 @@ export class CatchAllExceptionFilter implements ExceptionFilter {
           status: HttpStatus.CONFLICT,
           error: [
             getLanguageSpecificErrorMessage(
-              this.configService.get('LANGUAGE', { infer: true }),
+              this.configService.get('SERVER_LANG', { infer: true }),
               DATABASE_ERROR_MESSAGES_KEYS.DUPLICATE_KEY,
               replaceArray,
             ),

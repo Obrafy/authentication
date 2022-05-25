@@ -6,7 +6,7 @@ export default (): ConfigInterface => ({
   HOST: process.env.HOST,
   PORT: parseInt(process.env.PORT, 10),
 
-  LANGUAGE: process.env.LANG,
+  SERVER_LANG: process.env.SERVER_LANG,
 
   DB_BASE_URI: process.env.DB_BASE_URI,
   DB_NAME: process.env.DB_NAME,
