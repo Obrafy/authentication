@@ -9,6 +9,9 @@ const errorMessagesPtBr: ErrorMessages = {
     INVALID_TOKEN: 'o token informado não é valido',
     AT_LEAST_ONE_ROLE: 'o usuário deve sempre ter ao menos uma role ativa',
   },
+  DATABASE: {
+    DUPLICATE_KEY: 'um registro já existe para a chave única `:key:` com o valor `:value:`',
+  },
 };
 
 export default errorMessagesPtBr;

@@ -9,6 +9,9 @@ const errorMessagesEnUs: ErrorMessages = {
     INVALID_TOKEN: 'the provided token is not valid',
     AT_LEAST_ONE_ROLE: 'the user must have at least one active role at all times',
   },
+  DATABASE: {
+    DUPLICATE_KEY: 'a recosrd already exists for key :key: and value :value: (duplicate entry)',
+  },
 };
 
 export default errorMessagesEnUs;

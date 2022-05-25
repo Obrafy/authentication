@@ -8,11 +8,16 @@ interface AuthenticationErrorMessages {
   AT_LEAST_ONE_ROLE: string;
 }
 
-export interface ErrorMessages {
-  AUTHENTICATION_SERVICE: AuthenticationErrorMessages;
+interface DatabaseErrorMessages {
+  DUPLICATE_KEY: string;
 }
 
-// ERror Messages Key Enums
+export interface ErrorMessages {
+  AUTHENTICATION_SERVICE: AuthenticationErrorMessages;
+  DATABASE: DatabaseErrorMessages;
+}
+
+// Error Messages Key Enums
 export enum AUTHENTICATION_ERROR_MESSAGES_KEYS {
   USER_ALREADY_EXISTS = 'AUTHENTICATION_SERVICE.USER_ALREADY_EXISTS',
   USER_NOT_FOUND = 'AUTHENTICATION_SERVICE.USER_NOT_FOUND',
@@ -20,4 +25,8 @@ export enum AUTHENTICATION_ERROR_MESSAGES_KEYS {
   INVALID_PASSWORD = 'AUTHENTICATION_SERVICE.INVALID_PASSWORD',
   INVALID_TOKEN = 'AUTHENTICATION_SERVICE.INVALID_TOKEN',
   AT_LEAST_ONE_ROLE = 'AUTHENTICATION_SERVICE.AT_LEAST_ONE_ROLE',
+}
+
+export enum DATABASE_ERROR_MESSAGES_KEYS {
+  DUPLICATE_KEY = 'DATABASE.DUPLICATE_KEY',
 }

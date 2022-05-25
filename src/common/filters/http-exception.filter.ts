@@ -1,7 +1,14 @@
 import { ExceptionFilter, Catch, HttpException, HttpStatus, Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ConfigInterface } from 'src/config';
-import { getLanguageSpecificErrorMessage } from '../error-messages/error-messages.helpers';
+
+import { mongo } from 'mongoose';
+
+import { getLanguageSpecificErrorMessage } from 'src/common/error-messages/error-messages.helpers';
+import { DATABASE_ERROR_MESSAGES_KEYS } from '../error-messages/error-messages.interface';
+
+const DUPLICATE_KEY_MONGO_ERROR_CODE = 11000;
+
 @Injectable()
 @Catch()
 export class CatchAllExceptionFilter implements ExceptionFilter {
@@ -32,6 +39,39 @@ export class CatchAllExceptionFilter implements ExceptionFilter {
       return {
         status: httpStatus,
         error: errorMessages,
+        data: null,
+      };
+    }
+    // Handle Mongo Errors
+    if (exception instanceof mongo.MongoError) {
+      // Handle Duplicate Key Errors
+      if (exception.code == DUPLICATE_KEY_MONGO_ERROR_CODE) {
+        let replaceArray = undefined;
+
+        if ((exception as any).keyValue) {
+          replaceArray = [
+            { key: 'key', value: Object.keys((exception as any).keyValue)[0] },
+            { key: 'value', value: Object.values((exception as any).keyValue)[0] as string },
+          ];
+        }
+
+        return {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: [
+            getLanguageSpecificErrorMessage(
+              this.configService.get('LANGUAGE', { infer: true }),
+              DATABASE_ERROR_MESSAGES_KEYS.DUPLICATE_KEY,
+              replaceArray,
+            ),
+          ],
+          data: null,
+        };
+      }
+
+      // Hanle generic database errors
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: [exception.message],
         data: null,
       };
     }

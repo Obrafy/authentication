@@ -1,18 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import * as EXCEPTIONS from '@nestjs/common/exceptions';
-
 import { InjectModel } from '@nestjs/mongoose';
 
-import { JwtService } from './jwt.service';
-
-import * as DTO from '../dto/auth.dto';
-
-import { User, UserDocument } from '../entities/user.entity';
 import { Model } from 'mongoose';
 
-import { Status } from 'src/common/dto/status.enum';
 import { AUTHENTICATION_ERROR_MESSAGES_KEYS } from 'src/common/error-messages/error-messages.interface';
+import { Status } from 'src/common/dto/status.enum';
+import { JwtService } from 'src/auth/services/jwt.service';
+import * as DTO from 'src/auth/dto/auth.dto';
+import { User, UserDocument } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class AuthService {

@@ -2,10 +2,10 @@ import { Controller, Inject } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import makeResponse from 'src/common/helpers/make-response';
 
-import * as DTO from './dto/auth.dto';
-import * as PROTO from './dto/proto/auth.pb';
+import * as DTO from 'src/auth/dto/auth.dto';
+import * as PROTO from 'src/common/dto/proto/auth.pb';
 
-import { AuthService } from './services/auth.service';
+import { AuthService } from 'src/auth/services/auth.service';
 
 @Controller()
 export class AuthController {

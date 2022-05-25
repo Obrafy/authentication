@@ -1,6 +1,6 @@
 import { IsEmail, IsEnum, IsMongoId, IsString, MinLength } from 'class-validator';
-import * as PROTO from './proto/auth.pb';
-import { Role } from '../entities/role.enum';
+import * as PROTO from 'src/auth/dto/proto/auth.pb';
+import { Role } from 'src/auth/entities/role.enum';
 import { TransformRoleEnum } from 'src/common/decorators/transform-role.decorator';
 
 export class LoginRequestDto implements PROTO.LoginRequest {

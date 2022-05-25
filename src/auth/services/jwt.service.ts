@@ -6,7 +6,7 @@ import * as bcrypt from 'bcryptjs';
 import { Model } from 'mongoose';
 import { AUTHENTICATION_ERROR_MESSAGES_KEYS } from 'src/common/error-messages/error-messages.interface';
 
-import { User, UserDocument } from '../entities/user.entity';
+import { User, UserDocument } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class JwtService {
