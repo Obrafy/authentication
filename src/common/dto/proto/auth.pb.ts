@@ -24,6 +24,7 @@ export enum Status {
 
 /** User Message */
 export interface User {
+  id: string;
   email: string;
   lastLogin?: number | undefined;
   roles: Role[];
@@ -36,6 +37,16 @@ export interface SkillCategory {
   id: string;
   name: string;
   description: string;
+  status: Status;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface Skill {
+  id: string;
+  name: string;
+  description: string;
+  skillCategoryId?: string | undefined;
   status: Status;
   createdAt: number;
   updatedAt: number;
@@ -302,6 +313,71 @@ export interface AddSkillResponse {
   data: AddSkillResponseData | undefined;
 }
 
+/**
+ * FindSkillById
+ * Request
+ */
+export interface FindSkillByIdRequest {
+  skillId: string;
+}
+
+/** Response */
+export interface FindSkillByIdResponseData {
+  skill: Skill | undefined;
+}
+
+export interface FindSkillByIdResponse {
+  status: number;
+  error: string[];
+  data: FindSkillByIdResponseData | undefined;
+}
+
+/**
+ * FindSkillByName
+ * Request
+ */
+export interface FindSkillByNameRequest {
+  skillName: string;
+}
+
+/** Response */
+export interface FindSkillByNameResponseData {
+  skill: Skill | undefined;
+}
+
+export interface FindSkillByNameResponse {
+  status: number;
+  error: string[];
+  data: FindSkillByNameResponseData | undefined;
+}
+
+/**
+ * FindAllSkills
+ * Request
+ */
+export interface FindAllSkillsRequestFilter {
+  categories: FindAllSkillsRequestFilter_FindAllSkillsRequestCategoriesFilter[];
+}
+
+export interface FindAllSkillsRequestFilter_FindAllSkillsRequestCategoriesFilter {
+  categoryId: string;
+}
+
+export interface FindAllSkillsRequest {
+  filter?: FindAllSkillsRequestFilter | undefined;
+}
+
+/** Response */
+export interface FindAllSkillsResponseData {
+  skills: Skill[];
+}
+
+export interface FindAllSkillsResponse {
+  status: number;
+  error: string[];
+  data: FindAllSkillsResponseData | undefined;
+}
+
 export const AUTH_PACKAGE_NAME = 'auth';
 
 /** Authentication Service */
@@ -437,6 +513,12 @@ export interface SkillManagementServiceClient {
   /** Skill Management */
 
   addSkill(request: AddSkillRequest): Observable<AddSkillResponse>;
+
+  findSkillById(request: FindSkillByIdRequest): Observable<FindSkillByIdResponse>;
+
+  findSkillByName(request: FindSkillByNameRequest): Observable<FindSkillByNameResponse>;
+
+  findAllSkills(request: FindAllSkillsRequest): Observable<FindAllSkillsResponse>;
 }
 
 /** Skill Management Service */
@@ -469,6 +551,18 @@ export interface SkillManagementServiceController {
   /** Skill Management */
 
   addSkill(request: AddSkillRequest): Promise<AddSkillResponse> | Observable<AddSkillResponse> | AddSkillResponse;
+
+  findSkillById(
+    request: FindSkillByIdRequest,
+  ): Promise<FindSkillByIdResponse> | Observable<FindSkillByIdResponse> | FindSkillByIdResponse;
+
+  findSkillByName(
+    request: FindSkillByNameRequest,
+  ): Promise<FindSkillByNameResponse> | Observable<FindSkillByNameResponse> | FindSkillByNameResponse;
+
+  findAllSkills(
+    request: FindAllSkillsRequest,
+  ): Promise<FindAllSkillsResponse> | Observable<FindAllSkillsResponse> | FindAllSkillsResponse;
 }
 
 export function SkillManagementServiceControllerMethods() {
@@ -479,6 +573,9 @@ export function SkillManagementServiceControllerMethods() {
       'findSkillCategoryByName',
       'findAllSkillCategories',
       'addSkill',
+      'findSkillById',
+      'findSkillByName',
+      'findAllSkills',
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);

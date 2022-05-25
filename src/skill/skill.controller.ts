@@ -83,4 +83,59 @@ export class SkillController {
 
     return makeResponse<PROTO.AddSkillResponse>({ skillId });
   }
+
+  // Skill Management
+  @GrpcMethod(PROTO.SKILL_MANAGEMENT_SERVICE_NAME, 'FindSkillById')
+  private async findSkillById(payload: DTO.FindSkillByIdRequestDto): Promise<PROTO.FindSkillByIdResponse> {
+    const skill = await this.service.findSkillById(payload);
+
+    return makeResponse<PROTO.FindSkillByIdResponse>({
+      skill: {
+        id: skill.id,
+        name: skill.name,
+        description: skill.description,
+        status: skill.status,
+        skillCategoryId: skill.category ?? skill.category._id,
+        // Casting dates to integer for gRPC
+        createdAt: skill.createdAt.getTime(),
+        updatedAt: skill.updatedAt.getTime(),
+      },
+    });
+  }
+
+  @GrpcMethod(PROTO.SKILL_MANAGEMENT_SERVICE_NAME, 'FindSkillByName')
+  private async findSkillByName(payload: DTO.FindSkillByNameRequestDto): Promise<PROTO.FindSkillByNameResponse> {
+    const skill = await this.service.findSkillByName(payload);
+
+    return makeResponse<PROTO.FindSkillByNameResponse>({
+      skill: {
+        id: skill.id,
+        name: skill.name,
+        description: skill.description,
+        status: skill.status,
+        skillCategoryId: skill.category ?? skill.category._id,
+        // Casting dates to integer for gRPC
+        createdAt: skill.createdAt.getTime(),
+        updatedAt: skill.updatedAt.getTime(),
+      },
+    });
+  }
+
+  @GrpcMethod(PROTO.SKILL_MANAGEMENT_SERVICE_NAME, 'FindAllSkills')
+  private async findAllSkills(payload: DTO.FindAllSkillsRequestDto): Promise<PROTO.FindAllSkillsResponse> {
+    const skills = (await this.service.findAllSkills(payload)).map((skill) => ({
+      id: skill.id,
+      name: skill.name,
+      description: skill.description,
+      status: skill.status,
+      skillCategoryId: skill.category ?? skill.category._id,
+      // Casting dates to integer for gRPC
+      createdAt: skill.createdAt.getTime(),
+      updatedAt: skill.updatedAt.getTime(),
+    }));
+
+    return makeResponse<PROTO.FindAllSkillsResponse>({
+      skills,
+    });
+  }
 }

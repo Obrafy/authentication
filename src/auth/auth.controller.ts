@@ -37,6 +37,7 @@ export class AuthController {
 
     return makeResponse<PROTO.FindUserByIdResponse>({
       user: {
+        id: userData._id,
         email: userData.email,
         roles: userData.roles,
         status: userData.status,

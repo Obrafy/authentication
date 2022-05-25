@@ -1,4 +1,4 @@
-import { IsMongoId, IsOptional, IsString } from 'class-validator';
+import { IsMongoId, IsOptional, IsString, ValidateNested } from 'class-validator';
 import * as PROTO from 'src/common/dto/proto/auth.pb';
 
 export class AddSkillCategoryRequestDto implements PROTO.AddSkillCategoryRequest {
@@ -32,3 +32,15 @@ export class FindSkillCategoryByNameRequestDto implements PROTO.FindSkillCategor
 }
 
 export class FindAllSkillCategoriesRequestDto implements PROTO.FindAllSkillCategoriesRequest {}
+
+export class FindSkillByIdRequestDto implements PROTO.FindSkillByIdRequest {
+  @IsMongoId()
+  skillId: string;
+}
+
+export class FindSkillByNameRequestDto implements PROTO.FindSkillByNameRequest {
+  @IsString()
+  skillName: string;
+}
+
+export class FindAllSkillsRequestDto implements PROTO.FindAllSkillsRequest {}

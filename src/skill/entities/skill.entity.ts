@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { Document } from 'mongoose';
 import { Status } from 'src/common/dto/status.enum';
-import { SkillCategory } from './skill-category.entity';
+import { SkillCategory, SkillCategoryDocument } from './skill-category.entity';
 
 export type SkillDocument = Skill & Document;
 
@@ -15,7 +15,7 @@ export class Skill {
   description!: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: SkillCategory.name, required: false })
-  category?: SkillCategory;
+  category?: SkillCategoryDocument;
 
   // Record Status
   @Prop({ required: false, default: Status.ACTIVE })
