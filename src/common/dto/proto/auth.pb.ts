@@ -33,6 +33,7 @@ export interface User {
 }
 
 export interface SkillCategory {
+  id: string;
   name: string;
   description: string;
   status: Status;
@@ -264,6 +265,23 @@ export interface FindSkillCategoryByNameResponse {
 }
 
 /**
+ * FindAllSkillCategories
+ * Request
+ */
+export interface FindAllSkillCategoriesRequest {}
+
+/** Response */
+export interface FindAllSkillCategoriesResponseData {
+  skillCategories: SkillCategory[];
+}
+
+export interface FindAllSkillCategoriesResponse {
+  status: number;
+  error: string[];
+  data: FindAllSkillCategoriesResponseData | undefined;
+}
+
+/**
  * AddSkill
  * Request
  */
@@ -414,6 +432,8 @@ export interface SkillManagementServiceClient {
 
   findSkillCategoryByName(request: FindSkillCategoryByNameRequest): Observable<FindSkillCategoryByNameResponse>;
 
+  findAllSkillCategories(request: FindAllSkillCategoriesRequest): Observable<FindAllSkillCategoriesResponse>;
+
   /** Skill Management */
 
   addSkill(request: AddSkillRequest): Observable<AddSkillResponse>;
@@ -439,6 +459,13 @@ export interface SkillManagementServiceController {
     | Observable<FindSkillCategoryByNameResponse>
     | FindSkillCategoryByNameResponse;
 
+  findAllSkillCategories(
+    request: FindAllSkillCategoriesRequest,
+  ):
+    | Promise<FindAllSkillCategoriesResponse>
+    | Observable<FindAllSkillCategoriesResponse>
+    | FindAllSkillCategoriesResponse;
+
   /** Skill Management */
 
   addSkill(request: AddSkillRequest): Promise<AddSkillResponse> | Observable<AddSkillResponse> | AddSkillResponse;
@@ -446,7 +473,13 @@ export interface SkillManagementServiceController {
 
 export function SkillManagementServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ['addSkillCategory', 'findSkillCategoryById', 'findSkillCategoryByName', 'addSkill'];
+    const grpcMethods: string[] = [
+      'addSkillCategory',
+      'findSkillCategoryById',
+      'findSkillCategoryByName',
+      'findAllSkillCategories',
+      'addSkill',
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod('SkillManagementService', method)(constructor.prototype[method], method, descriptor);

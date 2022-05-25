@@ -38,6 +38,14 @@ export class SkillService {
     return this.skillCategoryModel.findOne({ name: skillCategoryName, status: { $ne: Status.DELETED } });
   }
 
+  /**
+   * Get all skill categories
+   * @returns An array of SkillCategory object
+   */
+  private async _getAllSkillCategories(): Promise<SkillCategoryDocument[]> {
+    return this.skillCategoryModel.find({ status: { $ne: Status.DELETED } });
+  }
+
   // Public Methods
   // Skill Category Management
 
@@ -79,6 +87,17 @@ export class SkillService {
     if (!skillCategory) throw new EXCEPTIONS.NotFoundException(SKILL_ERROR_MESSAGES_KEYS.SKILL_CATEGORY_NOT_FOUND);
 
     return skillCategory;
+  }
+
+  /**
+   * Find a skillCategory by it's name
+   * @param param.skillCategoryName The SkillCategory's name
+   * @returns The SkillCategory object
+   */
+  public async findAllSkillCategories(_: DTO.FindAllSkillCategoriesRequestDto): Promise<SkillCategoryDocument[]> {
+    const skillCategories = await this._getAllSkillCategories();
+
+    return skillCategories;
   }
 
   // Skill Management

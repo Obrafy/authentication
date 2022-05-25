@@ -30,3 +30,5 @@ export class FindSkillCategoryByNameRequestDto implements PROTO.FindSkillCategor
   @IsString()
   skillCategoryName: string;
 }
+
+export class FindAllSkillCategoriesRequestDto implements PROTO.FindAllSkillCategoriesRequest {}

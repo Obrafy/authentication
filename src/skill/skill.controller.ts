@@ -27,6 +27,7 @@ export class SkillController {
 
     return makeResponse<PROTO.FindSkillCategoryByIdResponse>({
       skillCategory: {
+        id: skillCategory._id,
         name: skillCategory.name,
         description: skillCategory.description,
         status: skillCategory.status,
@@ -45,6 +46,7 @@ export class SkillController {
 
     return makeResponse<PROTO.FindSkillCategoryByNameResponse>({
       skillCategory: {
+        id: skillCategory._id,
         name: skillCategory.name,
         description: skillCategory.description,
         status: skillCategory.status,
@@ -52,6 +54,25 @@ export class SkillController {
         createdAt: skillCategory.createdAt.getTime(),
         updatedAt: skillCategory.updatedAt.getTime(),
       },
+    });
+  }
+
+  @GrpcMethod(PROTO.SKILL_MANAGEMENT_SERVICE_NAME, 'FindAllSkillCategories')
+  private async findAllSkillCategories(
+    payload: DTO.FindAllSkillCategoriesRequestDto,
+  ): Promise<PROTO.FindAllSkillCategoriesResponse> {
+    const skillCategories = (await this.service.findAllSkillCategories(payload)).map((sc) => ({
+      id: sc._id,
+      name: sc.name,
+      description: sc.description,
+      status: sc.status,
+      // Casting dates to integer for gRPC
+      createdAt: sc.createdAt.getTime(),
+      updatedAt: sc.updatedAt.getTime(),
+    }));
+
+    return makeResponse<PROTO.FindAllSkillCategoriesResponse>({
+      skillCategories,
     });
   }
 
