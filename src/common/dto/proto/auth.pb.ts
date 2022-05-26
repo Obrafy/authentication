@@ -8,9 +8,11 @@ export const protobufPackage = 'auth';
 
 /** Role Enum */
 export enum Role {
-  USER = 0,
-  ADMIN = 1,
-  SUDO = 2,
+  INVALID = 0,
+  USER = 1,
+  ADMIN = 2,
+  SUDO = 3,
+  EMPLOYEE = 4,
   UNRECOGNIZED = -1,
 }
 
@@ -179,6 +181,61 @@ export interface RemoveUserByIdResponse {
   status: number;
   error: string[];
   data: RemoveUserByIdResponseData | undefined;
+}
+
+/**
+ * FindUserByEmail
+ * Request
+ */
+export interface FindUserByEmailRequest {
+  email: string;
+}
+
+/** Response */
+export interface FindUserByEmailResponseData {
+  user: User | undefined;
+}
+
+export interface FindUserByEmailResponse {
+  status: number;
+  error: string[];
+  data: FindUserByEmailResponseData | undefined;
+}
+
+/**
+ * FindAllUsers
+ * Request
+ */
+export interface FindAllUsersRequest {}
+
+/** Response */
+export interface FindAllUsersResponseData {
+  users: User[];
+}
+
+export interface FindAllUsersResponse {
+  status: number;
+  error: string[];
+  data: FindAllUsersResponseData | undefined;
+}
+
+/**
+ * FindAllUsersForRoles
+ * Request
+ */
+export interface FindAllUsersForRolesRequest {
+  roles: Role[];
+}
+
+/** Response */
+export interface FindAllUsersForRolesResponseData {
+  users: User[];
+}
+
+export interface FindAllUsersForRolesResponse {
+  status: number;
+  error: string[];
+  data: FindAllUsersForRolesResponseData | undefined;
 }
 
 /**
@@ -435,6 +492,12 @@ export interface UserManagementServiceClient {
 
   removeUserById(request: RemoveUserByIdRequest): Observable<RemoveUserByIdResponse>;
 
+  findUserByEmail(request: FindUserByEmailRequest): Observable<FindUserByEmailResponse>;
+
+  findAllUsers(request: FindAllUsersRequest): Observable<FindAllUsersResponse>;
+
+  findAllUsersForRoles(request: FindAllUsersForRolesRequest): Observable<FindAllUsersForRolesResponse>;
+
   /** User Status Mangement */
 
   activateUserById(request: ActivateUserByIdRequest): Observable<ActivateUserByIdResponse>;
@@ -460,6 +523,18 @@ export interface UserManagementServiceController {
   removeUserById(
     request: RemoveUserByIdRequest,
   ): Promise<RemoveUserByIdResponse> | Observable<RemoveUserByIdResponse> | RemoveUserByIdResponse;
+
+  findUserByEmail(
+    request: FindUserByEmailRequest,
+  ): Promise<FindUserByEmailResponse> | Observable<FindUserByEmailResponse> | FindUserByEmailResponse;
+
+  findAllUsers(
+    request: FindAllUsersRequest,
+  ): Promise<FindAllUsersResponse> | Observable<FindAllUsersResponse> | FindAllUsersResponse;
+
+  findAllUsersForRoles(
+    request: FindAllUsersForRolesRequest,
+  ): Promise<FindAllUsersForRolesResponse> | Observable<FindAllUsersForRolesResponse> | FindAllUsersForRolesResponse;
 
   /** User Status Mangement */
 
@@ -487,6 +562,9 @@ export function UserManagementServiceControllerMethods() {
     const grpcMethods: string[] = [
       'findUserById',
       'removeUserById',
+      'findUserByEmail',
+      'findAllUsers',
+      'findAllUsersForRoles',
       'activateUserById',
       'deactivateUserById',
       'addRoleToUser',

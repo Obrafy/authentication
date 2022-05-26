@@ -1,6 +1,9 @@
 import { ErrorMessages } from '../error-messages.interface';
 
 const errorMessagesPtBr: ErrorMessages = {
+  VALIDATION: {
+    INVALID_ROLE: 'a função de usuário (role) informada é invalida. [Roles Válidas: :valid_roles:]',
+  },
   DATABASE: {
     DUPLICATE_KEY: 'um registro já existe para a chave única `:key:` com o valor `:value:`',
   },
@@ -14,7 +17,7 @@ const errorMessagesPtBr: ErrorMessages = {
   },
   SKILL_SERVICE: {
     SKILL_NOT_FOUND: 'a habilidade não foi encontrada',
-    SKILL_CATEGORY_NOT_FOUND: 'a categoria de habilidade não foi encontrada',
+    SKILL_CATEGORY_NOT_FOUND: 'a categoria de habilidade (skillCategory) não foi encontrada',
   },
 };
 

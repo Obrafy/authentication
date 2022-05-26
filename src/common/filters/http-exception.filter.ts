@@ -4,8 +4,8 @@ import { ConfigInterface } from 'src/config';
 
 import { mongo } from 'mongoose';
 
-import { getLanguageSpecificErrorMessage } from 'src/common/error-messages/error-messages.helpers';
-import { DATABASE_ERROR_MESSAGES_KEYS } from '../error-messages/error-messages.interface';
+import { getLanguageSpecificErrorMessage, parseErrorMessage } from 'src/common/error-messages/error-messages.helpers';
+import { DATABASE_ERROR_MESSAGES_KEYS, ERROR_MESSAGE_KEYS } from '../error-messages/error-messages.interface';
 
 const DUPLICATE_KEY_MONGO_ERROR_CODE = 11000;
 
@@ -24,15 +24,14 @@ export class CatchAllExceptionFilter implements ExceptionFilter {
       const errorMessages = [];
 
       if (Array.isArray(response.message)) {
-        response.message.forEach((r: string) =>
+        response.message.forEach((r: ERROR_MESSAGE_KEYS | string) =>
           errorMessages.push(
-            getLanguageSpecificErrorMessage(this.configService.get('SERVER_LANG', { infer: true }), r) ?? r,
+            parseErrorMessage(r, { language: this.configService.get('SERVER_LANG', { infer: true }) }),
           ),
         );
       } else {
         errorMessages.push(
-          getLanguageSpecificErrorMessage(this.configService.get('SERVER_LANG', { infer: true }), response.message) ??
-            response.message,
+          parseErrorMessage(response.message, { language: this.configService.get('SERVER_LANG', { infer: true }) }),
         );
       }
 
@@ -46,13 +45,12 @@ export class CatchAllExceptionFilter implements ExceptionFilter {
     if (exception instanceof mongo.MongoError) {
       // Handle Duplicate Key Errors
       if (exception.code == DUPLICATE_KEY_MONGO_ERROR_CODE) {
-        let replaceArray = undefined;
+        const replaceablePairs = {};
 
         if ((exception as any).keyValue) {
-          replaceArray = [
-            { key: 'key', value: Object.keys((exception as any).keyValue)[0] },
-            { key: 'value', value: Object.values((exception as any).keyValue)[0] as string },
-          ];
+          replaceablePairs[Object.keys((exception as any).keyValue)[0]] = Object.values(
+            (exception as any).keyValue,
+          )[0] as string;
         }
 
         return {
@@ -61,7 +59,7 @@ export class CatchAllExceptionFilter implements ExceptionFilter {
             getLanguageSpecificErrorMessage(
               this.configService.get('SERVER_LANG', { infer: true }),
               DATABASE_ERROR_MESSAGES_KEYS.DUPLICATE_KEY,
-              replaceArray,
+              replaceablePairs,
             ),
           ],
           data: null,

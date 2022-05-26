@@ -49,6 +49,62 @@ export class AuthController {
     });
   }
 
+  @GrpcMethod(PROTO.USER_MANAGEMENT_SERVICE_NAME, 'FindUserByEmail')
+  private async findUserByEmail(payload: DTO.FindUserByEmailRequestDto): Promise<PROTO.FindUserByEmailResponse> {
+    const userData = await this.service.findUserByEmail(payload);
+
+    return makeResponse<PROTO.FindUserByEmailResponse>({
+      user: {
+        id: userData._id,
+        email: userData.email,
+        roles: userData.roles,
+        status: userData.status,
+        // Casting dates to integer for gRPC
+        createdAt: userData.createdAt.getTime(),
+        updatedAt: userData.updatedAt.getTime(),
+        lastLogin: userData.lastLogin && userData.lastLogin.getTime(),
+      },
+    });
+  }
+
+  @GrpcMethod(PROTO.USER_MANAGEMENT_SERVICE_NAME, 'FindAllUsers')
+  private async findAllUsers(payload: DTO.FindAllUsersRequestDto): Promise<PROTO.FindAllUsersResponse> {
+    const users = (await this.service.findAllUsers(payload)).map((user) => ({
+      id: user._id,
+      email: user.email,
+      roles: user.roles,
+      status: user.status,
+      // Casting dates to integer for gRPC
+      createdAt: user.createdAt.getTime(),
+      updatedAt: user.updatedAt.getTime(),
+      lastLogin: user.lastLogin && user.lastLogin.getTime(),
+    }));
+
+    return makeResponse<PROTO.FindAllUsersResponse>({
+      users,
+    });
+  }
+
+  @GrpcMethod(PROTO.USER_MANAGEMENT_SERVICE_NAME, 'FindAllUsersForRoles')
+  private async findAllUsersForRoles(
+    payload: DTO.FindAllUsersForRolesRequestDto,
+  ): Promise<PROTO.FindAllUsersForRolesResponse> {
+    const users = (await this.service.findAllUsersForRoles(payload)).map((user) => ({
+      id: user._id,
+      email: user.email,
+      roles: user.roles,
+      status: user.status,
+      // Casting dates to integer for gRPC
+      createdAt: user.createdAt.getTime(),
+      updatedAt: user.updatedAt.getTime(),
+      lastLogin: user.lastLogin && user.lastLogin.getTime(),
+    }));
+
+    return makeResponse<PROTO.FindAllUsersForRolesResponse>({
+      users,
+    });
+  }
+
   @GrpcMethod(PROTO.USER_MANAGEMENT_SERVICE_NAME, 'ActivateUserById')
   private async activateUserById(payload: DTO.ActivateUserByIdRequestDto): Promise<PROTO.ActivateUserByIdResponse> {
     await this.service.activateUserById(payload);

@@ -1,6 +1,9 @@
 import { ErrorMessages } from '../error-messages.interface';
 
 const errorMessagesEnUs: ErrorMessages = {
+  VALIDATION: {
+    INVALID_ROLE: 'the provided user role is not valid. [Valid Roles: :valid_roles:]',
+  },
   DATABASE: {
     DUPLICATE_KEY: 'a record already exists for key :key: and value :value: (duplicate entry)',
   },

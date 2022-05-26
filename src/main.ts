@@ -3,10 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
 import { join } from 'path';
-import { AppModule } from './app.module';
-import { protobufPackage } from './auth/dto/proto/auth.pb';
-import { CatchAllExceptionFilter } from './common/filters/http-exception.filter';
-import { ConfigInterface } from './config';
+import { AppModule } from 'src/app.module';
+import { protobufPackage } from 'src/common/dto/proto/auth.pb';
+import { CatchAllExceptionFilter } from 'src/common/filters/http-exception.filter';
+import { ConfigInterface } from 'src/config';
 
 async function bootstrap() {
   const app: INestMicroservice = await NestFactory.createMicroservice(AppModule, {

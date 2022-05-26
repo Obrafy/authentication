@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import * as EXCEPTIONS from '@nestjs/common/exceptions';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { Model } from 'mongoose';
+import { Model, FilterQuery } from 'mongoose';
 
 import { AUTHENTICATION_ERROR_MESSAGES_KEYS } from 'src/common/error-messages/error-messages.interface';
 import { Status } from 'src/common/dto/status.enum';
@@ -54,6 +54,14 @@ export class AuthService {
    */
   private async _getActiveUserByEmail(email: string): Promise<UserDocument> {
     return this.authModel.findOne({ email, status: Status.ACTIVE });
+  }
+
+  /**
+   * Get all users
+   * @returns An array of Skill objects
+   */
+  private async _getAllUsers(filter: FilterQuery<UserDocument> = {}): Promise<UserDocument[]> {
+    return this.authModel.find({ status: { $ne: Status.DELETED }, ...filter });
   }
 
   // Public Methods
@@ -139,6 +147,36 @@ export class AuthService {
     if (!user) throw new EXCEPTIONS.NotFoundException(AUTHENTICATION_ERROR_MESSAGES_KEYS.USER_NOT_FOUND);
 
     return user;
+  }
+
+  /**
+   * Finds a user by its email
+   * @param param.email The user's email
+   * @returns The user document object
+   */
+  public async findUserByEmail({ email }: DTO.FindUserByEmailRequestDto): Promise<UserDocument> {
+    const user = await this._getUserByEmail(email);
+
+    if (!user) throw new EXCEPTIONS.NotFoundException(AUTHENTICATION_ERROR_MESSAGES_KEYS.USER_NOT_FOUND);
+
+    return user;
+  }
+
+  /**
+   * Finds all users
+   * @returns An array of user document objects
+   */
+  public async findAllUsers(_: DTO.FindAllUsersRequestDto): Promise<UserDocument[]> {
+    return await this._getAllUsers();
+  }
+
+  /**
+   * Finds all users for given roles
+   * @param param.roles The roles to search for
+   * @returns An array of user document objects
+   */
+  public async findAllUsersForRoles({ roles }: DTO.FindAllUsersForRolesRequestDto): Promise<UserDocument[]> {
+    return await this._getAllUsers({ roles: { $in: roles } });
   }
 
   /**

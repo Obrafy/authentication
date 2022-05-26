@@ -1,7 +1,9 @@
 import { IsEmail, IsEnum, IsMongoId, IsString, MinLength } from 'class-validator';
-import * as PROTO from 'src/auth/dto/proto/auth.pb';
+import * as PROTO from 'src/common/dto/proto/auth.pb';
 import { Role } from 'src/auth/entities/role.enum';
 import { TransformRoleEnum } from 'src/common/decorators/transform-role.decorator';
+import { VALIDATION_ERROR_MESSAGES_KEYS } from 'src/common/error-messages/error-messages.interface';
+import { buildErrorMessage } from 'src/common/error-messages/error-messages.helpers';
 
 export class LoginRequestDto implements PROTO.LoginRequest {
   @IsEmail()
@@ -28,6 +30,24 @@ export class ValidateRequestDto implements PROTO.ValidateRequest {
 export class FindUserByIdRequestDto implements PROTO.FindUserByIdRequest {
   @IsMongoId()
   public readonly userId: string;
+}
+
+export class FindUserByEmailRequestDto implements PROTO.FindUserByEmailRequest {
+  @IsEmail()
+  public readonly email: string;
+}
+
+export class FindAllUsersRequestDto implements PROTO.FindAllUsersRequest {}
+
+export class FindAllUsersForRolesRequestDto implements PROTO.FindAllUsersForRolesRequest {
+  @TransformRoleEnum()
+  @IsEnum(Role, {
+    message: buildErrorMessage(VALIDATION_ERROR_MESSAGES_KEYS.INVALID_ROLE, {
+      replaceablePairs: { valid_roles: Object.keys(Role).join(', ') },
+    }),
+    each: true,
+  })
+  roles: PROTO.Role[];
 }
 
 export class ActivateUserByIdRequestDto implements PROTO.ActivateUserByIdRequest {

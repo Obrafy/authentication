@@ -17,10 +17,15 @@ interface SkillErrorMessages {
   SKILL_NOT_FOUND: string;
 }
 
+interface ValidationErrorMessages {
+  INVALID_ROLE: string;
+}
+
 export interface ErrorMessages {
   DATABASE: DatabaseErrorMessages;
   AUTHENTICATION_SERVICE: AuthenticationErrorMessages;
   SKILL_SERVICE: SkillErrorMessages;
+  VALIDATION: ValidationErrorMessages;
 }
 
 // Error Messages Key Enums
@@ -41,3 +46,13 @@ export enum SKILL_ERROR_MESSAGES_KEYS {
   SKILL_CATEGORY_NOT_FOUND = 'SKILL_SERVICE.SKILL_CATEGORY_NOT_FOUND',
   SKILL_NOT_FOUND = 'SKILL_SERVICE.SKILL_NOT_FOUND',
 }
+
+export enum VALIDATION_ERROR_MESSAGES_KEYS {
+  INVALID_ROLE = 'VALIDATION.INVALID_ROLE',
+}
+
+export type ERROR_MESSAGE_KEYS =
+  | DATABASE_ERROR_MESSAGES_KEYS
+  | AUTHENTICATION_ERROR_MESSAGES_KEYS
+  | SKILL_ERROR_MESSAGES_KEYS
+  | VALIDATION_ERROR_MESSAGES_KEYS;
