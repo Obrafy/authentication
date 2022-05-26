@@ -368,6 +368,25 @@ export interface FindAllSkillsResponse {
   data: FindAllSkillsResponseData | undefined;
 }
 
+/**
+ * FindAllSkillsForCategories
+ * Request
+ */
+export interface FindAllSkillsForCategoriesRequest {
+  categoriesIds: string[];
+}
+
+/** Response */
+export interface FindAllSkillsForCategoriesResponseData {
+  skills: Skill[];
+}
+
+export interface FindAllSkillsForCategoriesResponse {
+  status: number;
+  error: string[];
+  data: FindAllSkillsForCategoriesResponseData | undefined;
+}
+
 export const AUTH_PACKAGE_NAME = 'auth';
 
 /** Authentication Service */
@@ -509,6 +528,10 @@ export interface SkillManagementServiceClient {
   findSkillByName(request: FindSkillByNameRequest): Observable<FindSkillByNameResponse>;
 
   findAllSkills(request: FindAllSkillsRequest): Observable<FindAllSkillsResponse>;
+
+  findAllSkillsForCategories(
+    request: FindAllSkillsForCategoriesRequest,
+  ): Observable<FindAllSkillsForCategoriesResponse>;
 }
 
 /** Skill Management Service */
@@ -553,6 +576,13 @@ export interface SkillManagementServiceController {
   findAllSkills(
     request: FindAllSkillsRequest,
   ): Promise<FindAllSkillsResponse> | Observable<FindAllSkillsResponse> | FindAllSkillsResponse;
+
+  findAllSkillsForCategories(
+    request: FindAllSkillsForCategoriesRequest,
+  ):
+    | Promise<FindAllSkillsForCategoriesResponse>
+    | Observable<FindAllSkillsForCategoriesResponse>
+    | FindAllSkillsForCategoriesResponse;
 }
 
 export function SkillManagementServiceControllerMethods() {
@@ -566,6 +596,7 @@ export function SkillManagementServiceControllerMethods() {
       'findSkillById',
       'findSkillByName',
       'findAllSkills',
+      'findAllSkillsForCategories',
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);

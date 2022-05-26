@@ -142,4 +142,24 @@ export class SkillController {
       skills,
     });
   }
+
+  @GrpcMethod(PROTO.SKILL_MANAGEMENT_SERVICE_NAME, 'FindAllSkillsForCategories')
+  private async findAllSkillsForCategories(
+    payload: DTO.FindAllSkillsForCategoriesRequestDto,
+  ): Promise<PROTO.FindAllSkillsForCategoriesResponse> {
+    const skills = (await this.service.findAllSkillsForCategories(payload)).map((skill) => ({
+      id: skill.id,
+      name: skill.name,
+      description: skill.description,
+      status: skill.status,
+      skillCategoryId: skill.category ? skill.category._id : null,
+      // Casting dates to integer for gRPC
+      createdAt: skill.createdAt.getTime(),
+      updatedAt: skill.updatedAt.getTime(),
+    }));
+
+    return makeResponse<PROTO.FindAllSkillsForCategoriesResponse>({
+      skills,
+    });
+  }
 }

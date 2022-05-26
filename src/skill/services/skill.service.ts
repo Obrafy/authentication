@@ -165,4 +165,14 @@ export class SkillService {
   public async findAllSkills(_: DTO.FindAllSkillsRequestDto): Promise<SkillDocument[]> {
     return await this._getAllSkills();
   }
+
+  /**
+   * Find all skills for a given category
+   * @returns The Skill object
+   */
+  public async findAllSkillsForCategories({
+    categoriesIds,
+  }: DTO.FindAllSkillsForCategoriesRequestDto): Promise<SkillDocument[]> {
+    return await this._getAllSkills({ category: { $in: categoriesIds } });
+  }
 }

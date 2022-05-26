@@ -44,3 +44,8 @@ export class FindSkillByNameRequestDto implements PROTO.FindSkillByNameRequest {
 }
 
 export class FindAllSkillsRequestDto implements PROTO.FindAllSkillsRequest {}
+
+export class FindAllSkillsForCategoriesRequestDto implements PROTO.FindAllSkillsForCategoriesRequest {
+  @IsString({ each: true })
+  categoriesIds: string[];
+}
