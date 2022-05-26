@@ -355,17 +355,7 @@ export interface FindSkillByNameResponse {
  * FindAllSkills
  * Request
  */
-export interface FindAllSkillsRequestFilter {
-  categories: FindAllSkillsRequestFilter_FindAllSkillsRequestCategoriesFilter[];
-}
-
-export interface FindAllSkillsRequestFilter_FindAllSkillsRequestCategoriesFilter {
-  categoryId: string;
-}
-
-export interface FindAllSkillsRequest {
-  filter?: FindAllSkillsRequestFilter | undefined;
-}
+export interface FindAllSkillsRequest {}
 
 /** Response */
 export interface FindAllSkillsResponseData {

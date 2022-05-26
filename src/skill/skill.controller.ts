@@ -87,20 +87,24 @@ export class SkillController {
   // Skill Management
   @GrpcMethod(PROTO.SKILL_MANAGEMENT_SERVICE_NAME, 'FindSkillById')
   private async findSkillById(payload: DTO.FindSkillByIdRequestDto): Promise<PROTO.FindSkillByIdResponse> {
-    const skill = await this.service.findSkillById(payload);
+    try {
+      const skill = await this.service.findSkillById(payload);
 
-    return makeResponse<PROTO.FindSkillByIdResponse>({
-      skill: {
-        id: skill.id,
-        name: skill.name,
-        description: skill.description,
-        status: skill.status,
-        skillCategoryId: skill.category ?? skill.category._id,
-        // Casting dates to integer for gRPC
-        createdAt: skill.createdAt.getTime(),
-        updatedAt: skill.updatedAt.getTime(),
-      },
-    });
+      return makeResponse<PROTO.FindSkillByIdResponse>({
+        skill: {
+          id: skill.id,
+          name: skill.name,
+          description: skill.description,
+          status: skill.status,
+          skillCategoryId: skill.category ? skill.category._id : null,
+          // Casting dates to integer for gRPC
+          createdAt: skill.createdAt.getTime(),
+          updatedAt: skill.updatedAt.getTime(),
+        },
+      });
+    } catch (err) {
+      console.error({ err });
+    }
   }
 
   @GrpcMethod(PROTO.SKILL_MANAGEMENT_SERVICE_NAME, 'FindSkillByName')
@@ -113,7 +117,7 @@ export class SkillController {
         name: skill.name,
         description: skill.description,
         status: skill.status,
-        skillCategoryId: skill.category ?? skill.category._id,
+        skillCategoryId: skill.category ? skill.category._id : null,
         // Casting dates to integer for gRPC
         createdAt: skill.createdAt.getTime(),
         updatedAt: skill.updatedAt.getTime(),
@@ -128,7 +132,7 @@ export class SkillController {
       name: skill.name,
       description: skill.description,
       status: skill.status,
-      skillCategoryId: skill.category ?? skill.category._id,
+      skillCategoryId: skill.category ? skill.category._id : null,
       // Casting dates to integer for gRPC
       createdAt: skill.createdAt.getTime(),
       updatedAt: skill.updatedAt.getTime(),
