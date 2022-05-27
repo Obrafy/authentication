@@ -16,4 +16,9 @@ export default (): ConfigInterface => ({
 
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN,
   JWT_SECRET: process.env.JWT_SECRET,
+
+  SEED_ENABLED: process.env.SEED_ENABLED && process.env.SEED_ENABLED.toLowerCase() == 'true',
+
+  SUDO_USER_EMAIL: process.env.SUDO_USER_EMAIL,
+  SUDO_USER_PASSWORD: process.env.SUDO_USER_PASSWORD,
 });

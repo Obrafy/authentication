@@ -17,4 +17,17 @@ export default Joi.object<ConfigInterface>({
 
   JWT_EXPIRES_IN: Joi.string().required(),
   JWT_SECRET: Joi.string().required(),
+
+  SEED_ENABLED: Joi.boolean().default(false),
+
+  SUDO_USER_PASSWORD: Joi.alternatives().conditional('SEED_ENABLED', {
+    is: true,
+    then: Joi.string().required(),
+    otherwise: Joi.string().optional(),
+  }),
+  SUDO_USER_EMAIL: Joi.alternatives().conditional('SEED_ENABLED', {
+    is: true,
+    then: Joi.string().required(),
+    otherwise: Joi.string().optional(),
+  }),
 });

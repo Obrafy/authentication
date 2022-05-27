@@ -18,4 +18,9 @@ export interface ConfigInterface {
 
   JWT_SECRET: string;
   JWT_EXPIRES_IN: string;
+
+  SEED_ENABLED: boolean;
+
+  SUDO_USER_PASSWORD: string;
+  SUDO_USER_EMAIL: string;
 }
