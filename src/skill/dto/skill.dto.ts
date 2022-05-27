@@ -1,4 +1,4 @@
-import { IsMongoId, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsMongoId, IsOptional, IsString } from 'class-validator';
 import * as PROTO from 'src/common/dto/proto/auth.pb';
 
 export class AddSkillCategoryRequestDto implements PROTO.AddSkillCategoryRequest {
