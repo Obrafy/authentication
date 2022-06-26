@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: auth-service
+    build:
+      dockerfile: Dockerfile
+      context: .
+      # Only will build development stage from our dockerfile
+      target: development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    # Run a command against the development stage of the image
+    entrypoint: 'npm run lint'
