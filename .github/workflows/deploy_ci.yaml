@@ -14,12 +14,8 @@ jobs:
   #   steps:
   #     - name: Run Integration tests
   #       run: npm run test
-
-  build-and-publish:
+  lint:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -30,19 +26,26 @@ jobs:
       - name: Checking lint
         run: npm run lint
 
+  version-bump:
+    runs-on: ubuntu-latest
+    outputs:
+      tag_output: ${{ steps.tag_version.outputs.TAG }}
+    steps:
+      - uses: actions/checkout@v3
+
       - name: Bump version and push tag
         id: tag_version
-        uses: mathieudutour/github-tag-action@v6.0
-        with:
-          github_token: ${{ secrets.ACTIONS_TOKEN }}
+        run: bash |
+          ./.github/script/version-bump.sh
 
-      - name: Create a GitHub release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    needs: version-bump
 
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -56,4 +59,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.tag_version.outputs.new_tag }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ needs.version-bump.outputs.tag_output }}
